@@ -46,8 +46,14 @@ paid (Tier 1) key.
 
 **Labelling provenance:** questions and labels were drafted by an AI assistant (Claude) by
 reading the extracted page text, then given a second review pass that searched every
-answer's key terms across all pages to find other pages that also state the answer. They
-have not been independently verified by a human.
+answer's key terms across all pages to find other pages that also state the answer.
+
+**Human verification:** the project owner checked a random sample of **15 of the 50**
+questions against the PDFs (`node eval/sample-for-review.mjs 15 20261115`), confirming
+the snippet is on the labelled page and answers the question, including the
+`acceptablePages`. **15/15 were correct; no labels were changed.** The other 35 have not
+been human-verified.
+
 Labels were frozen before any pipeline change; they were not adjusted based on eval results.
 
 ## Metrics
