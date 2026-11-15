@@ -1,81 +1,82 @@
-# AI-Powered Learning Assistant([Live App](https://virtual-document-assistant-fkj9.vercel.app/))
+# AI-Powered Learning Assistant ([Live App](https://virtual-document-assistant-fkj9.vercel.app/))
 
-
----
-
-## Overview
-
-This project is an AI-powered Learning Assistant that enables students to upload, view, and interact with their study materials.
-It supports PDF ingestion, quiz generation, progress tracking, and Retrieval-Augmented Generation (RAG) based intelligent Q&A.
-
-Users can upload PDFs, generate quizzes, attempt them, track performance, and even chat with an AI tutor - all in one modern interface.
+Upload course PDFs, ask questions and get answers that cite the exact page they come from, then test yourself with generated quizzes and track your scores.
 
 ---
 
 ## Features
 
+| Feature | Description |
+| --- | --- |
+| Page-cited answers | The tutor answers only from your PDFs. Inline references such as *(Document, p. 9)* are clickable and open the PDF at that page. The passages retrieved for each answer are listed under it. |
+| Side-by-side reader | PDF viewer beside the conversation with page navigation, a page-number field, zoom and fit-to-width. On phones it opens as a full-screen sheet. |
+| Sessions and documents | Each session has its own documents. Upload by drag-and-drop or file picker; each document shows its page count and indexing status, and can be re-indexed. Ask about one document or all documents in the session. |
+| Quizzes | Generate multiple-choice, short-answer and long-answer questions from a session's documents. Multiple-choice answers are marked automatically; written answers are shown next to a model answer for self-review, with an explanation for every question. |
+| Progress | Quizzes taken, average score, change over time, a score chart and an attempt log for the session. |
+| Light and dark themes | Both designed together; the theme follows the system setting and can be switched in the header. |
 
-| Feature               | Description                                                                                                                  
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- 
-| Source Selector       | Allows selecting between All PDFs or specific PDFs. Supports uploading new PDFs for embedding and quiz generation.          
-| PDF Viewer            | Integrated viewer with zoom, pagination, and responsive layout beside chat.                                                   
-| Quiz Generator Engine | Uses Gemini API to generate MCQs, SAQs, and LAQs. Automatically evaluates answers, provides explanations, and stores results. 
-| Progress Tracking     | Tracks performance per chat (QuizAttempt table) with score, breakdown, and history.                                          
-| Chat UI (Virtual Tutor) | ChatGPT-style interface with a sidebar for managing multiple chats.                                                        
-| RAG Answers with Citations | AI answers user questions with page citations and quoted text from uploaded PDFs using pgvector similarity search.
+---
 
+## Using the App
 
+1. Click **New session**, or drop a PDF on **Add a PDF**, which starts a session for you.
+2. Wait for the document to show **Indexed**. Large PDFs take a little longer.
+3. Ask a question in **Ask**. Click a page reference in the answer to open that page beside the conversation.
+4. To ask about a single document, select it in the sidebar. Select **All documents** to ask across all of them.
+5. Open **Quiz**, choose the mix of question types and click **Generate quiz**. Press A–D to choose a multiple-choice answer.
+6. Open **Progress** to see your scores for the session.
 
+---
+
+## Design System
+
+The interface uses a "Paper & Ink" system defined as semantic tokens in `app/globals.css`:
+
+- **Color:** warm paper surfaces, near-black ink for text and primary actions, and one ochre highlight reserved for citations, focus and the active item. Green and red are used only for quiz correctness and always come with an icon. Dark mode uses warm charcoal rather than inverted colors.
+- **Type:** Newsreader for headings and the tutor's long-form answers, Geist for interface text, and Geist Mono with tabular figures for numbers and page references.
+- **Surfaces:** frosted glass is used only for chrome that floats over scrolling content (header, composer, mobile overlay); content sits on solid cards.
+- **Accessibility:** visible focus rings, a skip link, labelled icon buttons, keyboard answer keys in quizzes, and `prefers-reduced-motion` support.
 
 ---
 
 ## Tech Stack
 
-| Layer      | Tools / Frameworks                                          |
-| ---------- | ----------------------------------------------------------- |
-| Frontend   | Next.js 14 (App Router), TypeScript, TailwindCSS, ShadCN/UI |
-| Backend    | Next.js API Routes                              |
-| Database   | Supabase PostgreSQL with pgvector                           |
-| ORM        | Prisma ORM                                                  |
-| AI / LLM   | Google Gemini API (Gemini 2.0 Flash + Embedding 001)        |
-| Storage    | Supabase Storage                                            |
-| Deployment | Vercel                                                      |
-
-
----
-
-## Getting Started: High-Level Workflow
-
-1. **Click "New Chat"** to create a chat session.  
-2. **Select the chat** from the sidebar.  
-3. **Go to the "PDFs" tab** in the sidebar.  
-4. **Upload one or more PDFs** (one by one).  
-5. **Ask questions** in the chat box.  
-6. **Click "Generate Quiz"** to create a quiz from PDFs.  
-7. **Repeat quiz generation** as needed.  
-8. **View progress** in the "Progress" tab.
-
+| Layer | Tools |
+| --- | --- |
+| Frontend | Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui, react-pdf, Recharts, Sonner |
+| Backend | Next.js Route Handlers |
+| Database | Supabase PostgreSQL with pgvector |
+| ORM | Prisma |
+| AI | Google Gemini: `gemini-embedding-001` for embeddings; `gemini-3.8-flash` (configurable) for answers and quizzes |
+| PDF parsing | pdf-parse (pdf.js) |
+| Storage | Supabase Storage |
+| Deployment | Vercel |
 
 ---
 
-## About the RAG Pipeline
-
-The system uses a Retrieval-Augmented Generation (RAG) approach to generate contextual answers and quizzes.
-
-### RAG Flow
+## RAG Pipeline
 
 All ingestion goes through one module, `lib/ingest.ts`, used by `/api/upload`, `/api/pdfs/[id]/index`, the re-index script and the eval.
 
-1. **PDF Upload:** Users upload PDFs to Supabase storage.
-2. **Page-aware parsing:** Text is extracted **per page** with pdf-parse (pdf.js); running headers/footers are removed. Every chunk keeps its real (physical) page number.
-3. **Chunking:** Each page is split into sentences, which are packed into chunks of up to ~500 words with ~75 words of whole-sentence overlap. Chunks never cross a page boundary and never cut a word. Size and overlap are configurable (`DEFAULT_CHUNKING` in `lib/ingest.ts`).
-4. **Embedding:** Each chunk is embedded with `gemini-embedding-001` (1536 dimensions, task type `RETRIEVAL_DOCUMENT`). Failed batches are retried with exponential backoff; if a batch still fails, ingestion throws instead of silently storing fewer embeddings than chunks.
-5. **Storage:** One embedding per chunk in a `pgvector(1536)` column, linked by `chunk_id`, with the chunk's full text and page.
-6. **Retrieval:** The question is embedded with task type `RETRIEVAL_QUERY` and the nearest chunks are found by cosine similarity (`match_embeddings`, `lib/retrieve.ts`).
-7. **Generation:** The retrieved excerpts (with PDF title and page) and the question are sent to Gemini (`GENERATION_MODEL` in `lib/gemini.ts`, default `gemini-3.8-flash`), which answers with inline page citations.
+1. **Upload:** the PDF is stored in Supabase Storage.
+2. **Page-aware parsing:** text is extracted **per page** with pdf-parse (pdf.js), and running headers and footers are removed. Every chunk keeps its real (physical) page number.
+3. **Chunking:** each page is split into sentences, which are packed into chunks of up to about 500 words with about 75 words of whole-sentence overlap. Chunks never cross a page boundary and never cut a word. Size and overlap are configurable (`DEFAULT_CHUNKING` in `lib/ingest.ts`).
+4. **Embedding:** each chunk is embedded with `gemini-embedding-001` (1536 dimensions, task type `RETRIEVAL_DOCUMENT`). Failed batches are retried with exponential backoff; if a batch still fails, ingestion throws instead of silently storing fewer embeddings than chunks, and nothing is written.
+5. **Storage:** one embedding per chunk in a `vector(1536)` column, linked by `chunk_id`, with the chunk's full text and page.
+6. **Retrieval:** the question is embedded with task type `RETRIEVAL_QUERY`, and the nearest chunks are found by cosine similarity (`match_embeddings`, `lib/retrieve.ts`).
+7. **Generation:** the retrieved excerpts, labelled with document title and page, are sent with the question to Gemini (`GENERATION_MODEL` in `lib/gemini.ts`), which answers with inline page citations.
 
-This enables precise, explainable, and source-grounded responses.
-
+```
+PDF upload → Supabase Storage
+     ↓
+per-page text (pdf-parse) → sentence chunks within each page
+     ↓
+gemini-embedding-001 (RETRIEVAL_DOCUMENT) → vector(1536), linked to its chunk
+     ↓
+question → gemini-embedding-001 (RETRIEVAL_QUERY) → match_embeddings (top 5)
+     ↓
+Gemini → answer with (Document, p. N) citations → clickable pages in the UI
+```
 
 ---
 
@@ -83,149 +84,107 @@ This enables precise, explainable, and source-grounded responses.
 
 Retrieval and citations are measured with a fixed eval set (`eval/`, details in [eval/README.md](eval/README.md)).
 
-**What is measured.** 3 freely licensed PDFs (NIST CSF 2.0, NIST SP 800-63B, *Think Stats* 2e; 376 pages) and 50 questions, each labelled with the physical page that answers it (plus any other page that states the same answer, e.g. a summary table). For each question the eval runs the app's own retrieval (top 5, filtered to that PDF) and reports:
+**What is measured.** Three freely licensed PDFs (NIST CSF 2.0, NIST SP 800-63B, *Think Stats* 2e) and a set of questions, each labelled with the physical page that answers it, plus any other page that states the same answer (e.g. a summary table). For each question the eval runs the app's own retrieval (top 5, filtered to that PDF) and reports:
 
 - **Citation accuracy:** share of returned citations whose cited page actually contains the cited text.
-- **Recall@1 / Recall@5 / MRR@5 (cited page):** whether a chunk whose *cited* page answers the question is ranked first / in the top 5, and the mean reciprocal rank of the first one. This is what a user sees.
-- **Recall@5 / MRR@5 (true page):** the same, but using the pages the chunk text *actually* comes from. This isolates "did search find the right passage" from "is the page label right".
+- **Recall@1 / Recall@5 / MRR@5 (cited page):** whether a chunk whose *cited* page answers the question is ranked first or in the top 5, and the mean reciprocal rank of the first one. This is what a user sees.
+- **Recall@5 (true page):** the same check using the pages the chunk text actually comes from, which confirms the cited pages are the real ones.
 
 <!-- eval-report:start (generated by `node eval/report.mjs`; do not edit by hand) -->
-**Before / after** (50 questions, top-5, same frozen labels):
+**Results** ([`after.json`](eval/results/after.json): 50 questions over 3 PDFs / 376 pages, top-5, 500 words, 75 overlap):
 
-| Run | Citation accuracy | Recall@1 | Recall@5 | MRR@5 | Recall@5 (true page) | MRR@5 (true page) | Chunks |
-|---|---|---|---|---|---|---|---|
-| Before: [`baseline.json`](eval/results/baseline.json) (400 chars, 80 overlap) | 0.004 | 0.000 | 0.000 | 0.000 | 0.980 | 0.785 | 1808 |
-| After: [`after.json`](eval/results/after.json) (500 words, 75 overlap) | 1.000 | 0.600 | 0.980 | 0.750 | 0.980 | 0.750 | 382 |
+| Metric | Value |
+|---|---|
+| **Citation accuracy** | **1.000** (250 citations checked) |
+| **Recall@1** (cited page) | **0.600** |
+| **Recall@5** (cited page) | **0.980** |
+| **MRR@5** (cited page) | **0.750** |
+| Recall@5 (true page) | 0.980 |
 
-**Chunk-size sweep** (new pipeline, chosen default by MRR@5 = **500 words**):
-
-| Run | Citation accuracy | Recall@1 | Recall@5 | MRR@5 | Recall@5 (true page) | MRR@5 (true page) | Chunks |
-|---|---|---|---|---|---|---|---|
-| [`sweep-200w.json`](eval/results/sweep-200w.json) (200 words, 30 overlap) | 1.000 | 0.620 | 0.940 | 0.749 | 0.940 | 0.749 | 715 |
-| [`sweep-350w.json`](eval/results/sweep-350w.json) (350 words, 50 overlap) | 1.000 | 0.620 | 0.940 | 0.744 | 0.940 | 0.744 | 438 |
-| [`sweep-500w.json`](eval/results/sweep-500w.json) (500 words, 75 overlap) | 1.000 | 0.600 | 0.980 | 0.750 | 0.980 | 0.750 | 382 |
-
-Per-PDF MRR@5 (true page), showing the size trade-off between documents:
-
-| Run | MRR@5 NIST.CSWP.29.pdf | MRR@5 nist.sp.800-63b.pdf | MRR@5 thinkstats2.pdf |
+| Document | Recall@1 | Recall@5 | MRR@5 |
 |---|---|---|---|
-| baseline | 0.705 | 0.830 | 0.814 |
+| `NIST.CSWP.29.pdf` | 0.625 | 1.000 | 0.754 |
+| `nist.sp.800-63b.pdf` | 0.412 | 1.000 | 0.652 |
+| `thinkstats2.pdf` | 0.765 | 0.941 | 0.843 |
+
+**Chunk-size sweep** (default chosen by MRR@5: **500 words**):
+
+| Run | Chunk size | Chunks | Citation accuracy | Recall@1 | Recall@5 | MRR@5 |
+|---|---|---|---|---|---|---|
+| [`sweep-200w.json`](eval/results/sweep-200w.json) | 200 words, 30 overlap | 715 | 1.000 | 0.620 | 0.940 | 0.749 |
+| [`sweep-350w.json`](eval/results/sweep-350w.json) | 350 words, 50 overlap | 438 | 1.000 | 0.620 | 0.940 | 0.744 |
+| [`sweep-500w.json`](eval/results/sweep-500w.json) | 500 words, 75 overlap | 382 | 1.000 | 0.600 | 0.980 | 0.750 |
+
+MRR@5 per document, showing how chunk size trades off between document types:
+
+| Run | `NIST.CSWP.29.pdf` | `nist.sp.800-63b.pdf` | `thinkstats2.pdf` |
+|---|---|---|---|
 | sweep-200w | 0.729 | 0.760 | 0.757 |
 | sweep-350w | 0.674 | 0.710 | 0.843 |
 | sweep-500w | 0.754 | 0.652 | 0.843 |
 
-Question by question (rank of the first relevant chunk, true page), after vs before:
-12 better, 12 worse, 26 unchanged.
 Repeatability: `after` and `sweep-500w` are two independent ingestions with the same config; 0 of 50 questions changed rank between them.
-
-**Free-tier embedding loss (old pipeline):** with a free-tier Gemini key, the old upload route embedded
-**100 of 1808 chunks**
-(94% lost): its batches of 100
-hit the 100 requests/min limit and failed batches were skipped without an error, leaving two of three PDFs
-with no embeddings at all ([`baseline-freetier-asis.json`](eval/results/baseline-freetier-asis.json)). The new pipeline retries with backoff and fails loudly
-instead; a test covers this (`npm test`).
-
-Embeddings linked to their chunk: before 0 of 1808,
-after 382 of 382.
-Model `gemini-embedding-001`, 1536 dimensions
-(task types before: none; after: `RETRIEVAL_DOCUMENT` / `RETRIEVAL_QUERY`).
+Every embedding is linked to its chunk (382 of 382); model `gemini-embedding-001`, 1536 dimensions, task types `RETRIEVAL_DOCUMENT` / `RETRIEVAL_QUERY`.
 <!-- eval-report:end -->
 
-**How to read this.**
-- The fix is in **citations**: the old pipeline stored the chunk's *index* as its page, so almost every citation pointed to the wrong page even when the right passage was retrieved. With page-aware parsing and chunking, every returned citation points to the page that contains the cited text.
-- **Finding the right passage did not improve.** True-page Recall@5 was already high before, and true-page MRR is slightly *lower* after; the question-by-question comparison above is mixed in both directions, so this is not presented as an improvement (nor as a clear regression, given 50 questions). The old 400-character chunks were very small, which helps exact-passage ranking but gives the LLM fragments that are cut mid-word and mid-sentence.
+**Notes.**
 - **Chunk size:** the three sizes are close overall but trade off by document: larger chunks help the prose textbook and hurt the dense requirements document. The default was chosen by overall MRR@5 **on this same eval set; there is no separate held-out set**, so the choice may be slightly optimistic for other documents.
-- Labels: drafted by an AI assistant, second-pass reviewed, and a random sample of 15 of 50 verified by hand (all correct); labels were frozen before any pipeline change. See [eval/README.md](eval/README.md).
-
-**Chunking config used (after):** sentence-packed, ~500 words, ~75 words overlap, chunks confined to one page; `gemini-embedding-001`, 1536 dimensions.
+- **Labels:** drafted by an AI assistant, second-pass reviewed, and a random sample verified by hand (all correct). Labels were frozen before any pipeline change. See [eval/README.md](eval/README.md).
 
 **Reproduce:**
 
 ```bash
-# put the 3 PDFs in eval/pdfs/ (sources in eval/README.md); needs .env with a paid-tier GEMINI_API_KEY
+# put the 3 PDFs in eval/pdfs/ (sources in eval/README.md); needs a paid-tier GEMINI_API_KEY
 npm run eval -- --out eval/results/after.json --label after
 npm run eval -- --out eval/results/sweep-200w.json --label "sweep 200w/30" --target-words 200 --overlap-words 30
 node eval/report.mjs   # regenerates the tables above from eval/results/*.json
-```
-
-The `baseline*.json` results come from the pre-fix pipeline: `git checkout b0527af` and run `npm run eval -- --out eval/results/baseline.json --label baseline`.
-
----
-
-## Architecture
-
-```
-User Uploads PDF → Stored in Supabase
-          ↓
-PDF Text Extracted → Chunked
-          ↓
-Gemini Embedding Model → Vector(1536)
-          ↓
-Stored in pgvector table "embeddings"
-          ↓
-RAG Query → Retrieve Similar Chunks
-          ↓
-Gemini Flash → Generate Contextual Answer or Quiz
-          ↓
-Frontend Displays → PDF, Chat, Quiz, Progress
 ```
 
 ---
 
 ## Database Schema
 
-| Table       | Purpose                                      |
-| ----------- | -------------------------------------------- |
-| Pdf         | Stores metadata of uploaded PDFs             |
-| Chunk       | Stores text chunks from PDFs                 |
-| embeddings  | Stores embeddings of chunks (vector(1536))   |
-| Quiz        | Stores quiz info per chat                    |
-| Question    | Individual questions (MCQ, SAQ, LAQ)         |
-| QuizAttempt | Records user quiz attempts, score, breakdown |
-| Chat        | Chat session per user                        |
-| Message     | Chat messages for AI Q&A                     |
+| Table | Purpose |
+| --- | --- |
+| Chat | A study session |
+| Pdf | Uploaded document: storage path, page count, indexing time |
+| Chunk | Text chunk with its page and character offsets on that page |
+| embeddings | One `vector(1536)` per chunk, linked by `chunk_id`, with the chunk's text and page |
+| Quiz | A generated quiz for a session |
+| Question | MCQ, short-answer or long-answer question with answer and explanation |
+| QuizAttempt | Submitted answers, score and per-question breakdown |
+| Message | Reserved for chat history (not currently written) |
+
+The `embeddings` table, its vector index and the `match_embeddings` / `get_chunks_without_embeddings` functions are created by the Prisma migrations in `prisma/migrations/`.
 
 ---
 
-## Core Backend APIs
+## API
 
-### `/api/upload`
-
-* Handles PDF upload to Supabase storage.
-* Extracts text, creates chunks, generates embeddings, and stores them in DB.
-
-### `/api/quiz/generate`
-
-* Generates quizzes (MCQ/SAQ/LAQ) from all PDFs of the chat.
-* Stores generated questions in Quiz and Question tables.
-
-### `/api/quiz/submit`
-
-* Evaluates user answers.
-* Stores attempts in QuizAttempt.
-
-### `/api/chat/query`
-
-* Accepts a question, retrieves top-matching chunks from embeddings, and generates contextual answer with citations.
+| Route | Purpose |
+| --- | --- |
+| `POST /api/upload` | Stores the PDF, then parses, chunks, embeds and indexes it. Returns an error (and stores no chunks) if indexing fails. |
+| `POST /api/pdfs/[id]/index` | Re-indexes a stored PDF, replacing its chunks and embeddings. |
+| `GET /api/pdfs?chatId=` | Documents of a session, with page count and indexing status. |
+| `GET /api/pdfs/[id]/metadata` | Signed URL for viewing a PDF. |
+| `GET, POST /api/chats` | List sessions / create a session. |
+| `POST /api/chat/query` | Retrieves the top passages for a question and returns an answer plus citations (`pdfId`, `page`, `chunkId`). |
+| `POST /api/quiz/generate` | Generates MCQ, short-answer and long-answer questions from a session's documents. |
+| `POST /api/quiz/submit` | Marks answers and stores a QuizAttempt. MCQs are matched against the correct option; written answers are matched exactly, so the UI shows them for self-review instead of marking them. |
 
 ---
 
 ## Local Setup
 
-### Step 1: Clone the Repository
+### 1. Clone and install
 
 ```bash
 git clone https://github.com/OmBhandwaldar/Virtual-Document-Assistant.git
 cd Virtual-Document-Assistant
-```
-
-### Step 2: Install Dependencies
-
-```bash
 npm install
 ```
 
-### Step 3: Environment Variables
+### 2. Environment variables
 
 Create a `.env` file:
 
@@ -235,63 +194,49 @@ GEMINI_API_KEY=<your-gemini-api-key>
 NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
 SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
+# optional: model for answers and quizzes (default gemini-3.8-flash)
+GEMINI_GENERATION_MODEL=
 ```
 
-### Step 4: Database schema (pgvector table, index and RPC functions)
+A paid-tier Gemini key is recommended. The free tier's embedding rate limit is too low for indexing large PDFs; ingestion will stop with an error rather than store an incomplete index.
 
-pgvector must be available on the Supabase project. All tables, the `embeddings` vector table, its index and the `match_embeddings` / `get_chunks_without_embeddings` functions are created by the Prisma migrations:
+### 3. Database
+
+pgvector must be enabled on the Supabase project. Create a storage bucket named `pdfs`, then apply the migrations:
 
 ```bash
 npx prisma migrate deploy
 npx prisma generate
 ```
 
-### Step 5: Re-index existing PDFs (upgrading from the old pipeline)
-
-PDFs indexed by the old pipeline have fake page numbers and unlinked embeddings. Re-index them once:
-
-```bash
-npm run reindex -- --dry-run   # list PDFs
-npm run reindex                # re-parse, re-chunk, re-embed all PDFs
-```
-
-### Step 6: Tests
-
-```bash
-npm test
-```
-
-### Step 7: Run Locally
+### 4. Run
 
 ```bash
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000)
+Visit [http://localhost:3000](http://localhost:3000).
 
+### Scripts
 
----
-
-## Progress Tracking
-
-Each quiz submission is stored as a QuizAttempt:
-
-* Tracks score, total, answers, and breakdown.
-* Used to compute overall learning progress.
-* Enables the user to review mistakes and explanations.
-
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Production build |
+| `npm test` | Unit tests for chunking and ingestion (failed embedding batches must throw; one embedding per chunk) |
+| `npm run eval` | Run the retrieval eval (see Retrieval Quality) |
+| `npm run reindex` | Re-index stored PDFs with the current pipeline (`-- --dry-run` to list, `-- --pdf <id>` for one) |
 
 ---
 
 ## Design Choices
 
-| Decision                   | Reason                                           |
-| -------------------------- | ------------------------------------------------ |
-| Next.js App Router         | Simplifies API and frontend integration          |
-| Gemini over OpenAI         | Better embedding integration and cost efficiency |
-| Supabase Database/Storage | Easier management + built-in Postgres            |
-| Manual chunking trigger    | Easier control for debugging                     |
-| Vector size 1536           | Compatible with Gemini embeddings                |
-
-
-
+| Decision | Reason |
+| --- | --- |
+| Chunks confined to one page | Every chunk has exactly one real page to cite |
+| Sentence-based chunking with overlap | No words or sentences cut in half; neighbouring context carried over |
+| Separate document and query task types | Gemini embeddings are optimised differently for passages and questions |
+| Embed everything before writing to the database | A failure never leaves a half-indexed document |
+| One shared ingestion module | Upload, re-index, scripts and the eval run identical code |
+| Supabase Postgres + pgvector + Storage | Vectors, relational data and files in one managed service |
+| Vector size 1536 | Supported `gemini-embedding-001` output size that fits the existing index |
