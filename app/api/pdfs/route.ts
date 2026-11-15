@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     // ✅ Base query
     let query = supabase
       .from("Pdf")
-      .select("id, title, filename, preview, uploadedAt, chatId")
+      .select("id, title, filename, preview, uploadedAt, chatId, pages, indexedAt, Chat(title)")
       .order("uploadedAt", { ascending: false });
 
     // ✅ If chatId provided, filter PDFs belonging to that chat
@@ -21,7 +21,15 @@ export async function GET(req: Request) {
       query = query.eq("chatId", chatId);
     }
 
-    const { data, error } = await query;
+    const { data: rows, error } = await query;
+    // Hide documents that belong to internal chats (e.g. "__rag_eval__", the retrieval eval).
+    const data = (rows ?? [])
+      .filter((r) => !String((r as { Chat?: { title?: string } | null }).Chat?.title ?? "").startsWith("__"))
+      .map((r) => {
+        const row = { ...(r as Record<string, unknown>) };
+        delete row.Chat;
+        return row;
+      });
 
     if (error) {
       console.error("Error fetching PDFs:", error);

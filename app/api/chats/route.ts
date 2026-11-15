@@ -24,9 +24,11 @@ export async function POST(req: Request) {
 // (optional)
 export async function GET() {
   try {
-    const chats = await prisma.chat.findMany({
+    const all = await prisma.chat.findMany({
       orderBy: { createdAt: "desc" },
     });
+    // Hide internal chats such as "__rag_eval__". Filtered in JS: in SQL LIKE, "_" is a wildcard.
+    const chats = all.filter((c) => !c.title.startsWith("__"));
     return NextResponse.json(chats);
   } catch (err: unknown) {
     console.error("Error fetching chats:", err);
