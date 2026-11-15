@@ -4,6 +4,8 @@ export const EMBEDDING_MODEL = "gemini-embedding-001";
 export const EMBEDDING_DIM = 1536;
 export const DOCUMENT_TASK_TYPE = "RETRIEVAL_DOCUMENT";
 export const QUERY_TASK_TYPE = "RETRIEVAL_QUERY";
+/** Model for chat answers and quiz generation. gemini-2.0-flash / 2.5-flash return 404 for new API users. */
+export const GENERATION_MODEL = process.env.GEMINI_GENERATION_MODEL || "gemini-3.8-flash";
 
 export const gemini = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,

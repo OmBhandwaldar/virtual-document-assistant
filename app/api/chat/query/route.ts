@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { gemini } from "@/lib/gemini";
+import { gemini, GENERATION_MODEL } from "@/lib/gemini";
 import { prisma } from "@/lib/prisma";
 import { retrieveChunks } from "@/lib/retrieve";
 
@@ -50,7 +50,7 @@ Answer:
 
   // 3️⃣ Ask Gemini for the final answer
   const result = await gemini.models.generateContent({
-    model: "models/gemini-2.5-flash",
+    model: GENERATION_MODEL,
     contents: [{ role: "user", parts: [{ text: prompt }] }],
   });
 

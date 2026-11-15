@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@/lib/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { buildQuizPrompt, safeJsonParse } from "@/lib/prompt";
-import { gemini } from "@/lib/gemini";
+import { gemini, GENERATION_MODEL } from "@/lib/gemini";
 
 export const runtime = "nodejs";
 
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     const prompt = buildQuizPrompt(context, counts);
 
     const result = await gemini.models.generateContent({
-      model: "models/gemini-2.0-flash",
+      model: GENERATION_MODEL,
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 

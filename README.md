@@ -73,7 +73,7 @@ All ingestion goes through one module, `lib/ingest.ts`, used by `/api/upload`, `
 4. **Embedding:** Each chunk is embedded with `gemini-embedding-001` (1536 dimensions, task type `RETRIEVAL_DOCUMENT`). Failed batches are retried with exponential backoff; if a batch still fails, ingestion throws instead of silently storing fewer embeddings than chunks.
 5. **Storage:** One embedding per chunk in a `pgvector(1536)` column, linked by `chunk_id`, with the chunk's full text and page.
 6. **Retrieval:** The question is embedded with task type `RETRIEVAL_QUERY` and the nearest chunks are found by cosine similarity (`match_embeddings`, `lib/retrieve.ts`).
-7. **Generation:** The retrieved excerpts (with PDF title and page) and the question are sent to Gemini 2.5 Flash, which answers with inline page citations.
+7. **Generation:** The retrieved excerpts (with PDF title and page) and the question are sent to Gemini (`GENERATION_MODEL` in `lib/gemini.ts`, default `gemini-3.8-flash`), which answers with inline page citations.
 
 This enables precise, explainable, and source-grounded responses.
 
