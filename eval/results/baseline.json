@@ -1,0 +1,3846 @@
+{
+  "label": "baseline",
+  "createdAt": "2026-11-15T09:53:16.595Z",
+  "gitCommit": "8a72acc",
+  "gitDirty": false,
+  "pipeline": {
+    "ingestPath": "app/api/upload/route.ts POST (inline pipeline)",
+    "parser": "pdf2json (lib/pdfParser.ts), whitespace collapsed to single spaces, page boundaries discarded",
+    "chunking": {
+      "method": "fixed-size character windows (lib/chunker.ts chunkText)",
+      "unit": "characters",
+      "size": 400,
+      "overlap": 80,
+      "pageAssignment": "page = chunk index + 1 (not a real page number)"
+    },
+    "embedding": {
+      "model": "gemini-embedding-001",
+      "dimension": 1536,
+      "documentTaskType": null,
+      "queryTaskType": null,
+      "dimensionObservedInDb": 1536
+    }
+  },
+  "retrieval": {
+    "rpc": "match_embeddings",
+    "topK": 5,
+    "filter": "question's own PDF",
+    "index": "ivfflat (lists=100), default probes"
+  },
+  "questionsFile": "eval/questions.json",
+  "corpus": {
+    "NIST.CSWP.29.pdf": {
+      "pdfId": "7981fdcb-b666-49bb-9f30-e853c8cecdc4",
+      "pages": 32,
+      "chunks": 217,
+      "embeddings": 217,
+      "embeddingsLinkedToChunk": 0
+    },
+    "nist.sp.800-63b.pdf": {
+      "pdfId": "f29124eb-6ec8-4a5a-b0ff-d354ebda3913",
+      "pages": 80,
+      "chunks": 631,
+      "embeddings": 631,
+      "embeddingsLinkedToChunk": 0
+    },
+    "thinkstats2.pdf": {
+      "pdfId": "b2198091-a986-4035-98ad-e859fd16eb55",
+      "pages": 264,
+      "chunks": 960,
+      "embeddings": 960,
+      "embeddingsLinkedToChunk": 0
+    }
+  },
+  "metrics": {
+    "overall": {
+      "questions": 50,
+      "recallAt1": 0,
+      "recallAt5": 0,
+      "mrrAt5": 0,
+      "recallAt1_truePage": 0.66,
+      "recallAt5_truePage": 0.98,
+      "mrrAt5_truePage": 0.785,
+      "citations": 250,
+      "citationsLocated": 250,
+      "citationAccuracy": 0.004,
+      "avgResultsReturned": 5,
+      "queriesWithFewerThanTopK": 0
+    },
+    "byPdf": {
+      "NIST.CSWP.29.pdf": {
+        "questions": 16,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0.563,
+        "recallAt5_truePage": 0.938,
+        "mrrAt5_truePage": 0.705,
+        "citations": 80,
+        "citationsLocated": 80,
+        "citationAccuracy": 0,
+        "avgResultsReturned": 5,
+        "queriesWithFewerThanTopK": 0
+      },
+      "nist.sp.800-63b.pdf": {
+        "questions": 17,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0.765,
+        "recallAt5_truePage": 1,
+        "mrrAt5_truePage": 0.83,
+        "citations": 85,
+        "citationsLocated": 85,
+        "citationAccuracy": 0,
+        "avgResultsReturned": 5,
+        "queriesWithFewerThanTopK": 0
+      },
+      "thinkstats2.pdf": {
+        "questions": 17,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0.647,
+        "recallAt5_truePage": 1,
+        "mrrAt5_truePage": 0.814,
+        "citations": 85,
+        "citationsLocated": 85,
+        "citationAccuracy": 0.012,
+        "avgResultsReturned": 5,
+        "queriesWithFewerThanTopK": 0
+      }
+    },
+    "byType": {
+      "concept": {
+        "questions": 18,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0.722,
+        "recallAt5_truePage": 0.944,
+        "mrrAt5_truePage": 0.824,
+        "citations": 90,
+        "citationsLocated": 90,
+        "citationAccuracy": 0.011,
+        "avgResultsReturned": 5,
+        "queriesWithFewerThanTopK": 0
+      },
+      "factual": {
+        "questions": 26,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0.654,
+        "recallAt5_truePage": 1,
+        "mrrAt5_truePage": 0.765,
+        "citations": 130,
+        "citationsLocated": 130,
+        "citationAccuracy": 0,
+        "avgResultsReturned": 5,
+        "queriesWithFewerThanTopK": 0
+      },
+      "definition": {
+        "questions": 6,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0.5,
+        "recallAt5_truePage": 1,
+        "mrrAt5_truePage": 0.75,
+        "citations": 30,
+        "citationsLocated": 30,
+        "citationAccuracy": 0,
+        "avgResultsReturned": 5,
+        "queriesWithFewerThanTopK": 0
+      }
+    }
+  },
+  "perQuestion": [
+    {
+      "id": "csf-01",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        9
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 2,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 130,
+          "truePages": [
+            20
+          ],
+          "similarity": 0.6251,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "unique alphabetic identifier s . Each Function name in the table is linked to its portion of the appendix. The order of "
+        },
+        {
+          "rank": 2,
+          "storedPage": 57,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.6149,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ncidents in the R ESPOND and R ECOVER Functions. G OVERN is in the center of the wheel because it informs how an organiz"
+        },
+        {
+          "rank": 3,
+          "storedPage": 44,
+          "truePages": [
+            8
+          ],
+          "similarity": 0.5938,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " 1 . These outcomes are not a checklist of actions to perform ; specific actions taken to achieve a n outcome will vary "
+        },
+        {
+          "rank": 4,
+          "storedPage": 55,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.5928,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "re restored . R ECOVER supports the timely restoration of normal operations to reduce the effects of cybersecurity incid"
+        },
+        {
+          "rank": 5,
+          "storedPage": 56,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.5922,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "tegorize assets under I DENTIFY an d take steps to secure those assets under P ROTECT . I nvestments in planning and tes"
+        }
+      ]
+    },
+    {
+      "id": "csf-02",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        10
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 60,
+          "truePages": [
+            10
+          ],
+          "similarity": 0.6324,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ntinuously, and actions that support R ESPOND and R ECOVER should be ready at all times and happen when cybersecurity in"
+        },
+        {
+          "rank": 2,
+          "storedPage": 53,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.5971,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " . D ETECT enables the timely discovery and analysis of anomalies, indicators of compromise, and other potentially adver"
+        },
+        {
+          "rank": 3,
+          "storedPage": 174,
+          "truePages": [
+            26
+          ],
+          "similarity": 0.5844,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "cted from environmental threats o PR.IR - 03: Mechanisms are implemented to achieve resilience requirements in normal an"
+        },
+        {
+          "rank": 4,
+          "storedPage": 130,
+          "truePages": [
+            20
+          ],
+          "similarity": 0.583,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "unique alphabetic identifier s . Each Function name in the table is linked to its portion of the appendix. The order of "
+        },
+        {
+          "rank": 5,
+          "storedPage": 61,
+          "truePages": [
+            10
+          ],
+          "similarity": 0.5799,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "D , and R ECOVER outcomes help discover and manage incidents. Each Function is named after a verb that summarizes its co"
+        }
+      ]
+    },
+    {
+      "id": "csf-03",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        10
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 4,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 39,
+          "truePages": [
+            7
+          ],
+          "similarity": 0.6874,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "i zations both inside and outside of the United States. The CSF should be used in conjunction with other resources (e.g."
+        },
+        {
+          "rank": 2,
+          "storedPage": 19,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6667,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "isks alongside other risks of the enterprise, including those that are financial, privacy, supply chain, reputational, t"
+        },
+        {
+          "rank": 3,
+          "storedPage": 17,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6643,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " help organizations of all sizes and sectors — including industry, government, academia, and nonprofit — to manage and r"
+        },
+        {
+          "rank": 4,
+          "storedPage": 62,
+          "truePages": [
+            10
+          ],
+          "similarity": 0.655,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "comes of technical and management activities. The Subcategories are not exhaustive, but they describe detailed outcomes "
+        },
+        {
+          "rank": 5,
+          "storedPage": 63,
+          "truePages": [
+            10,
+            11
+          ],
+          "similarity": 0.6541,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "al technology (OT). They also appl y to all types of technology environments, including cloud, mobile, and artificial in"
+        }
+      ]
+    },
+    {
+      "id": "csf-04",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "definition",
+      "relevantPages": [
+        11
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 66,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.7462,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "Profile includes one or both of the following : 1. A Cur rent Profile specifies the Core outcomes that an organization i"
+        },
+        {
+          "rank": 2,
+          "storedPage": 65,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.7113,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "sess, prioritize, and communicate the Core ’s outcomes by considering an organization’s mission objectives, stakeholder "
+        },
+        {
+          "rank": 3,
+          "storedPage": 67,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.6949,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "lected and prioritized for achieving its cybersecurity risk manageme nt objectives. A Target Profile considers anticipat"
+        },
+        {
+          "rank": 4,
+          "storedPage": 74,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6858,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "gaps between the Current and Target Profiles , and create an action plan. Conduct a gap analysis to i dentify and analyz"
+        },
+        {
+          "rank": 5,
+          "storedPage": 25,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6832,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "h are available online and updated regularly. Creating current and target state O rganizational Profiles helps organizat"
+        }
+      ]
+    },
+    {
+      "id": "csf-05",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "definition",
+      "relevantPages": [
+        11
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 2,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 86,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.6413,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rmative References can be sector - or technology - specific. They may be produced by NIST or another organization. S ome"
+        },
+        {
+          "rank": 2,
+          "storedPage": 68,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.6408,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "eated and published to address shared intere sts and goals among a number of organizations . A Community Profile is typi"
+        },
+        {
+          "rank": 3,
+          "storedPage": 33,
+          "truePages": [
+            6
+          ],
+          "similarity": 0.6203,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "e the CSF. They include: • Informative References that point to sources of guidance on each outcome from existing global"
+        },
+        {
+          "rank": 4,
+          "storedPage": 85,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.6184,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": ": Informative References, Implementation Examples, and Quick Start Guides . Informative Ref erences are mappings that in"
+        },
+        {
+          "rank": 5,
+          "storedPage": 6,
+          "truePages": [
+            2
+          ],
+          "similarity": 0.6145,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "e useful to those making and influencing policy ( e.g., associations, professional organizations, regulators) who set an"
+        }
+      ]
+    },
+    {
+      "id": "csf-06",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        12
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 74,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.728,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "gaps between the Current and Target Profiles , and create an action plan. Conduct a gap analysis to i dentify and analyz"
+        },
+        {
+          "rank": 2,
+          "storedPage": 99,
+          "truePages": [
+            16
+          ],
+          "similarity": 0.682,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rganizational priorities, resources, and risk direction from executives . Managers then collaborate with practitioners t"
+        },
+        {
+          "rank": 3,
+          "storedPage": 73,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6691,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "at types of information the Profile should include for the selected CSF outcomes, and document the needed information. C"
+        },
+        {
+          "rank": 4,
+          "storedPage": 75,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6616,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "aps. 5. Implement the action plan , and update the Organizational Profile. F ollow the action plan to address the gaps a"
+        },
+        {
+          "rank": 5,
+          "storedPage": 65,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.6442,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "sess, prioritize, and communicate the Core ’s outcomes by considering an organization’s mission objectives, stakeholder "
+        }
+      ]
+    },
+    {
+      "id": "csf-07",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        12
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 71,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.7091,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "a Profile could address an entire organization or be scoped to an organization’s financial systems or to count ering ran"
+        },
+        {
+          "rank": 2,
+          "storedPage": 70,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6841,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 7 1. Scope the Organizational Profile. D ocument the high "
+        },
+        {
+          "rank": 3,
+          "storedPage": 76,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6623,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " often as needed. There are additional uses for Organizational Profiles. For example, a Current Prof ile can be used to "
+        },
+        {
+          "rank": 4,
+          "storedPage": 65,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.661,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "sess, prioritize, and communicate the Core ’s outcomes by considering an organization’s mission objectives, stakeholder "
+        },
+        {
+          "rank": 5,
+          "storedPage": 67,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.6583,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "lected and prioritized for achieving its cybersecurity risk manageme nt objectives. A Target Profile considers anticipat"
+        }
+      ]
+    },
+    {
+      "id": "csf-08",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        13
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 81,
+          "truePages": [
+            13
+          ],
+          "similarity": 0.7084,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "le, an organization can use the Tiers to communicate internally as a benchmark for a n organization - wide 1 1 For the p"
+        },
+        {
+          "rank": 2,
+          "storedPage": 40,
+          "truePages": [
+            7
+          ],
+          "similarity": 0.6775,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "se level. The CSF is a flexible framework that is intended to be tailored for use by all organizations regardless of siz"
+        },
+        {
+          "rank": 3,
+          "storedPage": 78,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6561,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rize the rigor of an organization’s cybersecurity risk governance and management practices , and they provide context fo"
+        },
+        {
+          "rank": 4,
+          "storedPage": 204,
+          "truePages": [
+            30
+          ],
+          "similarity": 0.6512,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "/mission objectives in how risk is approached and communicated. The organization adapts its cybersecurity practices base"
+        },
+        {
+          "rank": 5,
+          "storedPage": 200,
+          "truePages": [
+            30
+          ],
+          "similarity": 0.6505,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "sonnel formally act upon those risks through mechanisms such as written agreements to communicate baseline requirements,"
+        }
+      ]
+    },
+    {
+      "id": "csf-09",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        14
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 88,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.6584,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "mplementation Examples provide notional examples of concise, action - oriented steps to help achieve the outcomes of the"
+        },
+        {
+          "rank": 2,
+          "storedPage": 44,
+          "truePages": [
+            8
+          ],
+          "similarity": 0.6304,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " 1 . These outcomes are not a checklist of actions to perform ; specific actions taken to achieve a n outcome will vary "
+        },
+        {
+          "rank": 3,
+          "storedPage": 89,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.6135,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "could be taken by an organization to achieve an outcome, nor do they re present a baseline of required actions to addres"
+        },
+        {
+          "rank": 4,
+          "storedPage": 75,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.5911,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "aps. 5. Implement the action plan , and update the Organizational Profile. F ollow the action plan to address the gaps a"
+        },
+        {
+          "rank": 5,
+          "storedPage": 61,
+          "truePages": [
+            10
+          ],
+          "similarity": 0.588,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "D , and R ECOVER outcomes help discover and manage incidents. Each Function is named after a verb that summarizes its co"
+        }
+      ]
+    },
+    {
+      "id": "csf-10",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        14
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 7,
+          "truePages": [
+            2
+          ],
+          "similarity": 0.6573,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "t Guides and Community Profiles. All resources are made publicly available on the NIST CSF website . Suggestions for add"
+        },
+        {
+          "rank": 2,
+          "storedPage": 214,
+          "truePages": [
+            32
+          ],
+          "similarity": 0.6464,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ain commercial equipment, instruments, software, or materials, commercial or non - commercial, are identified in this pa"
+        },
+        {
+          "rank": 3,
+          "storedPage": 22,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6415,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "t Guides (QSGs) . Also, various tools offer downloadable formats to help organizations that choose to automate some of t"
+        },
+        {
+          "rank": 4,
+          "storedPage": 6,
+          "truePages": [
+            2
+          ],
+          "similarity": 0.6385,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "e useful to those making and influencing policy ( e.g., associations, professional organizations, regulators) who set an"
+        },
+        {
+          "rank": 5,
+          "storedPage": 32,
+          "truePages": [
+            6
+          ],
+          "similarity": 0.6363,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " can achieve those outcomes are provided in a suite of online resources that complement the CSF and are available throug"
+        }
+      ]
+    },
+    {
+      "id": "csf-11",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        15
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 3,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 58,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.668,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "tive opportunities . Actions to reduce cybersecurity risk might benefit an organization in other ways, like increasing r"
+        },
+        {
+          "rank": 2,
+          "storedPage": 57,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.6524,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ncidents in the R ESPOND and R ECOVER Functions. G OVERN is in the center of the wheel because it informs how an organiz"
+        },
+        {
+          "rank": 3,
+          "storedPage": 93,
+          "truePages": [
+            15
+          ],
+          "similarity": 0.6435,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "s about cybersecurity expenditures and actions . An o rganization may choose to handle risk in one or more ways — includ"
+        },
+        {
+          "rank": 4,
+          "storedPage": 202,
+          "truePages": [
+            30
+          ],
+          "similarity": 0.6243,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ons. E xecutives monitor cybersecurity risk s in the sa me context as financial and other organizational risks. The orga"
+        },
+        {
+          "rank": 5,
+          "storedPage": 110,
+          "truePages": [
+            17
+          ],
+          "similarity": 0.6234,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " their nature may monitor risk at the enterprise level , while larger companies may maintain separate risk management ef"
+        }
+      ]
+    },
+    {
+      "id": "csf-12",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        18
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 119,
+          "truePages": [
+            18
+          ],
+          "similarity": 0.8127,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "However, privacy risks can also arise by means that are unrelated to cybersecurity incidents . An o rganization process "
+        },
+        {
+          "rank": 2,
+          "storedPage": 120,
+          "truePages": [
+            18
+          ],
+          "similarity": 0.7837,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " expressed in various ways, but NIST describes them as ranging from dignity - type effects (e.g., embarrassment or stigm"
+        },
+        {
+          "rank": 3,
+          "storedPage": 128,
+          "truePages": [
+            19,
+            20
+          ],
+          "similarity": 0.6578,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "curity, reputational, and privacy ) will yield a more integrated outcome and organizational efficiencies. Cybersecurity "
+        },
+        {
+          "rank": 4,
+          "storedPage": 118,
+          "truePages": [
+            18
+          ],
+          "similarity": 0.6546,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ty Framework (CSF) 2.0 February 26, 2024 13 Fig. 6 . Cybersecurity and privacy risk relationship Cybersecurity risk mana"
+        },
+        {
+          "rank": 5,
+          "storedPage": 121,
+          "truePages": [
+            18
+          ],
+          "similarity": 0.649,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ybersecurity and privacy risks. Additionally, NIST’s Privacy Risk Assessment Methodology (PRAM) h as a catalog of exampl"
+        }
+      ]
+    },
+    {
+      "id": "csf-13",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        19
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 5,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 152,
+          "truePages": [
+            23
+          ],
+          "similarity": 0.678,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " products and services, and other third parties are understood , recorded, prioritized, assessed, responded to, and moni"
+        },
+        {
+          "rank": 2,
+          "storedPage": 150,
+          "truePages": [
+            22,
+            23
+          ],
+          "similarity": 0.6744,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " cybersecurity and enterprise risk management, risk assessment, and improvement processes o GV.SC - 04: Suppliers are kn"
+        },
+        {
+          "rank": 3,
+          "storedPage": 151,
+          "truePages": [
+            23
+          ],
+          "similarity": 0.6706,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ed, prioritized, and integrated into contracts and other types of agreements with suppliers and other relevant third par"
+        },
+        {
+          "rank": 4,
+          "storedPage": 199,
+          "truePages": [
+            29,
+            30
+          ],
+          "similarity": 0.6664,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " in the organization. NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 25 Tier Cybersecurity Ri"
+        },
+        {
+          "rank": 5,
+          "storedPage": 126,
+          "truePages": [
+            19
+          ],
+          "similarity": 0.6601,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " C - SCRM . SP 800 - 161 r1 ( Revision 1 ) , Cybersecurity Supply Chain Risk Management Practices for Systems and Organi"
+        }
+      ]
+    },
+    {
+      "id": "csf-14",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        19
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 128,
+          "truePages": [
+            19,
+            20
+          ],
+          "similarity": 0.7681,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "curity, reputational, and privacy ) will yield a more integrated outcome and organizational efficiencies. Cybersecurity "
+        },
+        {
+          "rank": 2,
+          "storedPage": 129,
+          "truePages": [
+            19,
+            20
+          ],
+          "similarity": 0.7563,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "categories to describe AI outcomes and help manage risks related to AI . NIST CSWP 29 The NIST Cybersecurity Framework ("
+        },
+        {
+          "rank": 3,
+          "storedPage": 127,
+          "truePages": [
+            19
+          ],
+          "similarity": 0.7058,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "rary example is artificial intelligence ( AI ) , which has cybersecurity and privacy risks, as well as many other types "
+        },
+        {
+          "rank": 4,
+          "storedPage": 94,
+          "truePages": [
+            15
+          ],
+          "similarity": 0.6869,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": ", an organization can use the CSF b oth internally to manage its cybersecurity capabilities and externally to oversee or"
+        },
+        {
+          "rank": 5,
+          "storedPage": 120,
+          "truePages": [
+            18
+          ],
+          "similarity": 0.6825,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " expressed in various ways, but NIST describes them as ranging from dignity - type effects (e.g., embarrassment or stigm"
+        }
+      ]
+    },
+    {
+      "id": "csf-15",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        20
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 2,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 44,
+          "truePages": [
+            8
+          ],
+          "similarity": 0.6553,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " 1 . These outcomes are not a checklist of actions to perform ; specific actions taken to achieve a n outcome will vary "
+        },
+        {
+          "rank": 2,
+          "storedPage": 130,
+          "truePages": [
+            20
+          ],
+          "similarity": 0.6369,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "unique alphabetic identifier s . Each Function name in the table is linked to its portion of the appendix. The order of "
+        },
+        {
+          "rank": 3,
+          "storedPage": 131,
+          "truePages": [
+            20
+          ],
+          "similarity": 0.6066,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "g of the Subcategories is intentionally not sequential; gaps in numbering indicate CSF 1.1 Subcategories that were reloc"
+        },
+        {
+          "rank": 4,
+          "storedPage": 61,
+          "truePages": [
+            10
+          ],
+          "similarity": 0.5895,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "D , and R ECOVER outcomes help discover and manage incidents. Each Function is named after a verb that summarizes its co"
+        },
+        {
+          "rank": 5,
+          "storedPage": 31,
+          "truePages": [
+            6
+          ],
+          "similarity": 0.5821,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ces . Tiers can also provide context for how an organization views cybersecurity risks and the processes in place to man"
+        }
+      ]
+    },
+    {
+      "id": "csf-16",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        30
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 201,
+          "truePages": [
+            30
+          ],
+          "similarity": 0.7545,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "Adaptive There is an organization - wide approach to managing cybersecurity risk s that uses risk - informed polici es, "
+        },
+        {
+          "rank": 2,
+          "storedPage": 202,
+          "truePages": [
+            30
+          ],
+          "similarity": 0.7342,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ons. E xecutives monitor cybersecurity risk s in the sa me context as financial and other organizational risks. The orga"
+        },
+        {
+          "rank": 3,
+          "storedPage": 193,
+          "truePages": [
+            29
+          ],
+          "similarity": 0.7271,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "cy. The p rioritization of cybersecurity activities and protection needs is directly informed by organizational risk obj"
+        },
+        {
+          "rank": 4,
+          "storedPage": 194,
+          "truePages": [
+            29
+          ],
+          "similarity": 0.7187,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ity risk s has not been established. Consideration of cybersecurity in organizational objectives and programs may occur "
+        },
+        {
+          "rank": 5,
+          "storedPage": 103,
+          "truePages": [
+            16
+          ],
+          "similarity": 0.7149,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "y communicate expectations about risk appetite, accountability , and resources . E xecutives are also responsible for in"
+        }
+      ]
+    },
+    {
+      "id": "dig-01",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        16
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 99,
+          "truePages": [
+            16
+          ],
+          "similarity": 0.7653,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "le that attributes are collected and made available by the digital identity service. Any PII or othe r personal informat"
+        },
+        {
+          "rank": 2,
+          "storedPage": 87,
+          "truePages": [
+            13
+          ],
+          "similarity": 0.6902,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "nts for each of the AALs is provided below; see Sections 4 and 5 of this document for specific normative requirements. A"
+        },
+        {
+          "rank": 3,
+          "storedPage": 100,
+          "truePages": [
+            16
+          ],
+          "similarity": 0.6866,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "vailable online. Authenticator Assurance Le vel 1 This section is normative. AAL1 provides some assurance that the claim"
+        },
+        {
+          "rank": 4,
+          "storedPage": 355,
+          "truePages": [
+            44
+          ],
+          "similarity": 0.6751,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " is authenticated at AAL1, the CSP SHALL NOT expose personal information, even if self - asserted, to the subscriber. As"
+        },
+        {
+          "rank": 5,
+          "storedPage": 354,
+          "truePages": [
+            44
+          ],
+          "similarity": 0.6703,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "t, authenticators at the same AAL as the desired IAL SHALL be bound to the account. For example, if the subscriber has s"
+        }
+      ]
+    },
+    {
+      "id": "dig-02",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        19,
+        22
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 124,
+          "truePages": [
+            19
+          ],
+          "similarity": 0.7074,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "user activity. Reauthentication of the subscriber SHALL be repeated following any period of inactivity lasting 30 minute"
+        },
+        {
+          "rank": 2,
+          "storedPage": 142,
+          "truePages": [
+            21
+          ],
+          "similarity": 0.6734,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " of the subscriber SHALL be repeated following any period of inactivity lasting 15 minutes or longer. Reauthentication S"
+        },
+        {
+          "rank": 3,
+          "storedPage": 392,
+          "truePages": [
+            48
+          ],
+          "similarity": 0.6673,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " any number of reasons, including but not limited to an inactivity time out, an explicit logout event, or other means. T"
+        },
+        {
+          "rank": 4,
+          "storedPage": 409,
+          "truePages": [
+            50
+          ],
+          "similarity": 0.6558,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "f t he subscriber at an authenticated session (i.e., that the subscriber has not walked away without logging out). A ses"
+        },
+        {
+          "rank": 5,
+          "storedPage": 506,
+          "truePages": [
+            64
+          ],
+          "similarity": 0.6501,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " with adequate time (e.g., 1 hour) to save their work before th e fixed periodic reauthentication event required regardl"
+        }
+      ]
+    },
+    {
+      "id": "dig-03",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        21,
+        22
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 142,
+          "truePages": [
+            21
+          ],
+          "similarity": 0.7103,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " of the subscriber SHALL be repeated following any period of inactivity lasting 15 minutes or longer. Reauthentication S"
+        },
+        {
+          "rank": 2,
+          "storedPage": 124,
+          "truePages": [
+            19
+          ],
+          "similarity": 0.7097,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "user activity. Reauthentication of the subscriber SHALL be repeated following any period of inactivity lasting 30 minute"
+        },
+        {
+          "rank": 3,
+          "storedPage": 410,
+          "truePages": [
+            50
+          ],
+          "similarity": 0.689,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "tion time limit SHALL be extended by prompting the subscriber for the authentication factor(s) specified in Table 7 - 1 "
+        },
+        {
+          "rank": 4,
+          "storedPage": 38,
+          "truePages": [
+            7
+          ],
+          "similarity": 0.6865,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": ".................... ................................ .................. 8 4.2.5 Records Retention Policy .............."
+        },
+        {
+          "rank": 5,
+          "storedPage": 411,
+          "truePages": [
+            50
+          ],
+          "similarity": 0.6822,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ts AAL Requirement 1 Presentation of any one factor 2 Presentation of a memorized secret or biometric 3 Presentation of "
+        }
+      ]
+    },
+    {
+      "id": "dig-04",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        18,
+        22
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 112,
+          "truePages": [
+            18
+          ],
+          "similarity": 0.7325,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "from: http s ://doi.org/10.6028/ NIST.SP.800 - 63b 4.2.1 Permitted Authenticator Types At AAL2, authentication SHALL occ"
+        },
+        {
+          "rank": 2,
+          "storedPage": 131,
+          "truePages": [
+            20
+          ],
+          "similarity": 0.7059,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " Types AAL3 authentication SHALL occur by the use of one of a combination of authenticators satisfying the requirements "
+        },
+        {
+          "rank": 3,
+          "storedPage": 111,
+          "truePages": [
+            17,
+            18
+          ],
+          "similarity": 0.6887,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ession and control of two distinct authenticati on factors is required through secure authentication protocol(s). Approv"
+        },
+        {
+          "rank": 4,
+          "storedPage": 89,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.6868,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rove possession and control of the authenticator through a secure authentication protocol. Authenticator Assurance Level"
+        },
+        {
+          "rank": 5,
+          "storedPage": 152,
+          "truePages": [
+            22
+          ],
+          "similarity": 0.6846,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "rement AAL1 AAL2 AAL3 Permitted Authenticator Types Memorized Secret; Look - Up Secret; Out - of - Band; SF OTP Device; "
+        }
+      ]
+    },
+    {
+      "id": "dig-05",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "concept",
+      "relevantPages": [
+        18
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 116,
+          "truePages": [
+            18
+          ],
+          "similarity": 0.7382,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ion 5.2.3 , the device has to be authenticated in addition to the biometric — a biometric is recognized as a factor, but"
+        },
+        {
+          "rank": 2,
+          "storedPage": 233,
+          "truePages": [
+            31
+          ],
+          "similarity": 0.7047,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "in authentication after activation through an additional authentication factor. This includes hardw are devices and soft"
+        },
+        {
+          "rank": 3,
+          "storedPage": 526,
+          "truePages": [
+            66
+          ],
+          "similarity": 0.6986,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "verifier. The second authentication factor may be achieved through some kind of integral entry pad to enter a memorized "
+        },
+        {
+          "rank": 4,
+          "storedPage": 451,
+          "truePages": [
+            58
+          ],
+          "similarity": 0.6977,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ttacker attempting to compromise the authentication process. • Out of band techniques may be employed to verify pr oof o"
+        },
+        {
+          "rank": 5,
+          "storedPage": 421,
+          "truePages": [
+            52
+          ],
+          "similarity": 0.6887,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " Out - of - band secrets may be intercepted by an attacker and used to authenticate their own session. • Something you a"
+        }
+      ]
+    },
+    {
+      "id": "dig-06",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        20,
+        22
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 136,
+          "truePages": [
+            20
+          ],
+          "similarity": 0.7487,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "henticators used at AAL3 SHALL be hardware cryptographic modules validated at FIPS 140 Level 2 or higher overall with at"
+        },
+        {
+          "rank": 2,
+          "storedPage": 90,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.7412,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "through secure authentication protocol(s). A pproved cryptographic techniques are required at AAL2 and above. Authentica"
+        },
+        {
+          "rank": 3,
+          "storedPage": 135,
+          "truePages": [
+            20
+          ],
+          "similarity": 0.7322,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " AAL3 SHALL be verifier impersonation resistant as described in Section 5.2.5 and SHALL be replay resistant as described"
+        },
+        {
+          "rank": 4,
+          "storedPage": 272,
+          "truePages": [
+            35
+          ],
+          "similarity": 0.722,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " The requirements for a multi - factor cryptographic software verifier are identical to those for a single - factor cryp"
+        },
+        {
+          "rank": 5,
+          "storedPage": 137,
+          "truePages": [
+            20
+          ],
+          "similarity": 0.7205,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " Verifiers at AAL3 SHALL be validated at FIPS 140 Level 1 or higher. Verifiers a t AAL3 SHALL be verifier compromise res"
+        }
+      ]
+    },
+    {
+      "id": "dig-07",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        24
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 4,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 619,
+          "truePages": [
+            79
+          ],
+          "similarity": 0.724,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "e user wishes. Extremely long passwords (perhaps megabytes in length) could conceivably require excessive processing tim"
+        },
+        {
+          "rank": 2,
+          "storedPage": 613,
+          "truePages": [
+            78
+          ],
+          "similarity": 0.7139,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "characterizing password strength [ Strength ] [ Composition ] . Passwords that are too short yield to brute force attack"
+        },
+        {
+          "rank": 3,
+          "storedPage": 612,
+          "truePages": [
+            78
+          ],
+          "similarity": 0.705,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "use of passwords are not affected by password complexity and length. Keystroke logging, phishing, and social engineering"
+        },
+        {
+          "rank": 4,
+          "storedPage": 160,
+          "truePages": [
+            24
+          ],
+          "similarity": 0.6939,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "e chosen and memorized by the user. Memorized secrets need to be of sufficient complexity and secrecy that it would be i"
+        },
+        {
+          "rank": 5,
+          "storedPage": 618,
+          "truePages": [
+            79
+          ],
+          "similarity": 0.6913,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ude more compl ex than those that are expected to resist only online attacks. Users should be encouraged to make their p"
+        }
+      ]
+    },
+    {
+      "id": "dig-08",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        24
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 5,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 618,
+          "truePages": [
+            79
+          ],
+          "similarity": 0.7265,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ude more compl ex than those that are expected to resist only online attacks. Users should be encouraged to make their p"
+        },
+        {
+          "rank": 2,
+          "storedPage": 619,
+          "truePages": [
+            79
+          ],
+          "similarity": 0.7259,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "e user wishes. Extremely long passwords (perhaps megabytes in length) could conceivably require excessive processing tim"
+        },
+        {
+          "rank": 3,
+          "storedPage": 612,
+          "truePages": [
+            78
+          ],
+          "similarity": 0.7067,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "use of passwords are not affected by password complexity and length. Keystroke logging, phishing, and social engineering"
+        },
+        {
+          "rank": 4,
+          "storedPage": 613,
+          "truePages": [
+            78
+          ],
+          "similarity": 0.6986,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "characterizing password strength [ Strength ] [ Composition ] . Passwords that are too short yield to brute force attack"
+        },
+        {
+          "rank": 5,
+          "storedPage": 164,
+          "truePages": [
+            24
+          ],
+          "similarity": 0.6884,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "nces for likely mistyping, verifiers MAY replace multiple consecutive space characters with a single space character pr "
+        }
+      ]
+    },
+    {
+      "id": "dig-09",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        25,
+        79
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 624,
+          "truePages": [
+            79
+          ],
+          "similarity": 0.7306,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ese include dictionary words and passwords from previous breaches, such as the “Password1!” example above. For this reas"
+        },
+        {
+          "rank": 2,
+          "storedPage": 170,
+          "truePages": [
+            25
+          ],
+          "similarity": 0.7205,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "asswords obtained from previous breach corpuses. • Dictionary words. • Repetitive or sequential characters (e.g. ‘aaaaaa"
+        },
+        {
+          "rank": 3,
+          "storedPage": 613,
+          "truePages": [
+            78
+          ],
+          "similarity": 0.7129,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "characterizing password strength [ Strength ] [ Composition ] . Passwords that are too short yield to brute force attack"
+        },
+        {
+          "rank": 4,
+          "storedPage": 169,
+          "truePages": [
+            25
+          ],
+          "similarity": 0.6899,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "your first pet?”) when choosing memorized secrets. When processing requests to establish and change memorized secrets, v"
+        },
+        {
+          "rank": 5,
+          "storedPage": 623,
+          "truePages": [
+            79
+          ],
+          "similarity": 0.6897,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "rds and may introduce usability issues (e.g., the undetected use of two spaces rather than one), so it may be beneficial"
+        }
+      ]
+    },
+    {
+      "id": "dig-10",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        26
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 183,
+          "truePages": [
+            26
+          ],
+          "similarity": 0.7447,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "akes to compute the password hash. Therefore, the iteration count SHOULD be as large as verification server performance "
+        },
+        {
+          "rank": 2,
+          "storedPage": 617,
+          "truePages": [
+            79
+          ],
+          "similarity": 0.742,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": ".org/10.6028/ NIST.SP.800 - 63b with a random value and hashed, preferably us ing a computationally expensive algorithm."
+        },
+        {
+          "rank": 3,
+          "storedPage": 618,
+          "truePages": [
+            79
+          ],
+          "similarity": 0.7265,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ude more compl ex than those that are expected to resist only online attacks. Users should be encouraged to make their p"
+        },
+        {
+          "rank": 4,
+          "storedPage": 193,
+          "truePages": [
+            27
+          ],
+          "similarity": 0.7172,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "bed in Section 5.1.1.2 . The salt value SHALL be at least 32 in bits in length and arbitrarily chosen so as to minimize "
+        },
+        {
+          "rank": 5,
+          "storedPage": 184,
+          "truePages": [
+            26
+          ],
+          "similarity": 0.715,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ifier. This salt value, if used, SHALL be generated by an approved random bit generator [ SP 800 - 90Ar1 ] and provide a"
+        }
+      ]
+    },
+    {
+      "id": "dig-11",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        29
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 3,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 528,
+          "truePages": [
+            66
+          ],
+          "similarity": 0.714,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "eed adequate time to enter the authenticator output, including looking back and forth between the multi - factor OTP dev"
+        },
+        {
+          "rank": 2,
+          "storedPage": 384,
+          "truePages": [
+            47
+          ],
+          "similarity": 0.7085,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "uspended in this manner. The CSP MAY set a time limit after which a suspended authenticator can no longer be reactivated"
+        },
+        {
+          "rank": 3,
+          "storedPage": 215,
+          "truePages": [
+            29
+          ],
+          "similarity": 0.7056,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "r presentation to the claimant. It SHALL then wait for an approval (or disapproval) message via the secondary channel. I"
+        },
+        {
+          "rank": 4,
+          "storedPage": 198,
+          "truePages": [
+            28
+          ],
+          "similarity": 0.698,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "laimant may receive the secret on their mobile device and type it (typically a 6 - digit code) into their authentication"
+        },
+        {
+          "rank": 5,
+          "storedPage": 233,
+          "truePages": [
+            31
+          ],
+          "similarity": 0.6932,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "in authentication after activation through an additional authentication factor. This includes hardw are devices and soft"
+        }
+      ]
+    },
+    {
+      "id": "dig-12",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "concept",
+      "relevantPages": [
+        30
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 219,
+          "truePages": [
+            30
+          ],
+          "similarity": 0.7222,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "istered telephone number being used is associated with a specific physical device. Changing the pre - registered telepho"
+        },
+        {
+          "rank": 2,
+          "storedPage": 218,
+          "truePages": [
+            30
+          ],
+          "similarity": 0.6826,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "g/10.6028/ NIST.SP.800 - 63b 5.1.3.3 Authent ication using the Public Switched Telephone Network Use of the PSTN for out"
+        },
+        {
+          "rank": 3,
+          "storedPage": 433,
+          "truePages": [
+            55
+          ],
+          "similarity": 0.6613,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ber in order to convince the subscriber to reveal their authenticator secret or authenticator o utput. A memorized secre"
+        },
+        {
+          "rank": 4,
+          "storedPage": 434,
+          "truePages": [
+            55
+          ],
+          "similarity": 0.6538,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "uerading as a system administ rator. An out of band secret sent via SMS is received by an attacker who has convinced the"
+        },
+        {
+          "rank": 5,
+          "storedPage": 445,
+          "truePages": [
+            57
+          ],
+          "similarity": 0.6529,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ing or Pharming Use authenticators that provide verifier imper sonation resistance. 5.2.5 Social Engineering Avoid use o"
+        }
+      ]
+    },
+    {
+      "id": "dig-13",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "concept",
+      "relevantPages": [
+        25
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 3,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 509,
+          "truePages": [
+            64
+          ],
+          "similarity": 0.7321,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "de: • Memorability of the memorized secret. o The likelihood of recall failure increases as the re are more items for us"
+        },
+        {
+          "rank": 2,
+          "storedPage": 510,
+          "truePages": [
+            64
+          ],
+          "similarity": 0.7231,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": ". • User experience during entry of the memorized secret. o Support copy and paste functionality in fields for entering "
+        },
+        {
+          "rank": 3,
+          "storedPage": 175,
+          "truePages": [
+            25
+          ],
+          "similarity": 0.7131,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ease the likelihood that users will choose stronger memorized secrets. In order to assist the claimant in successfully e"
+        },
+        {
+          "rank": 4,
+          "storedPage": 174,
+          "truePages": [
+            25
+          ],
+          "similarity": 0.7076,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "rbitrarily (e.g., periodically). However, verifiers SH ALL force a change if there is evidence of compromise of the auth"
+        },
+        {
+          "rank": 5,
+          "storedPage": 518,
+          "truePages": [
+            65
+          ],
+          "similarity": 0.7034,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ticularly problematic when users must enter text on mobile devices. Providing larger touch areas will improve usability "
+        }
+      ]
+    },
+    {
+      "id": "dig-14",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        38
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 300,
+          "truePages": [
+            38
+          ],
+          "similarity": 0.7295,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "iometric system SHALL allow no more than 5 consecutive failed authentication attempts or 10 consecutive fail ed attempts"
+        },
+        {
+          "rank": 2,
+          "storedPage": 501,
+          "truePages": [
+            63
+          ],
+          "similarity": 0.7147,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "Allow at least 10 entry attempts for authenticators requiring the entry of the authenticator output by the user. The lon"
+        },
+        {
+          "rank": 3,
+          "storedPage": 299,
+          "truePages": [
+            38
+          ],
+          "similarity": 0.7087,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "esentation attacks . Testing of presentation attack resistance SHALL be in accordance with Clause 12 of ISO/IEC 30107 - "
+        },
+        {
+          "rank": 4,
+          "storedPage": 560,
+          "truePages": [
+            71
+          ],
+          "similarity": 0.6896,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "wed attempts. For example, for rate limiting (i.e., throttling), inform users of the time period they have to wait until"
+        },
+        {
+          "rank": 5,
+          "storedPage": 301,
+          "truePages": [
+            38
+          ],
+          "similarity": 0.6838,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "easing exponentially with each successive attem pt (e.g., 1 minute before the following failed attempt, 2 minutes before"
+        }
+      ]
+    },
+    {
+      "id": "dig-15",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        48
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 397,
+          "truePages": [
+            48
+          ],
+          "similarity": 0.7147,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " generated by the session host during an interaction, typically immediately following authentication. 2. SHALL be genera"
+        },
+        {
+          "rank": 2,
+          "storedPage": 216,
+          "truePages": [
+            29
+          ],
+          "similarity": 0.7036,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "thentication secret only once during th e validity period. The verifier SHALL generate random authentication secrets wit"
+        },
+        {
+          "rank": 3,
+          "storedPage": 191,
+          "truePages": [
+            27
+          ],
+          "similarity": 0.693,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "nt for the next secret from their authenticator or for a specific (e.g., numbe red) secret. A given secret from an authe"
+        },
+        {
+          "rank": 4,
+          "storedPage": 394,
+          "truePages": [
+            48
+          ],
+          "similarity": 0.6885,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " subscriber is running — such as a browser, application, or operating system (i.e., the session subject) — and the RP or"
+        },
+        {
+          "rank": 5,
+          "storedPage": 629,
+          "truePages": [
+            80
+          ],
+          "similarity": 0.6838,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rmitted the use of randomly generated PINs with 6 or more digits while requiring user - chosen memorized secrets to be a"
+        }
+      ]
+    },
+    {
+      "id": "dig-16",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        50
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 408,
+          "truePages": [
+            50
+          ],
+          "similarity": 0.7352,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": ". An instance of a mobile application that retains a session sec ret. Session secrets SHALL be non - persistent. That is"
+        },
+        {
+          "rank": 2,
+          "storedPage": 392,
+          "truePages": [
+            48
+          ],
+          "similarity": 0.6962,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " any number of reasons, including but not limited to an inactivity time out, an explicit logout event, or other means. T"
+        },
+        {
+          "rank": 3,
+          "storedPage": 407,
+          "truePages": [
+            50
+          ],
+          "similarity": 0.6773,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "hentication Continuity of authenticated sessions SHALL be based upon the possession of a session secret issued by the ve"
+        },
+        {
+          "rank": 4,
+          "storedPage": 124,
+          "truePages": [
+            19
+          ],
+          "similarity": 0.6677,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "user activity. Reauthentication of the subscriber SHALL be repeated following any period of inactivity lasting 30 minute"
+        },
+        {
+          "rank": 5,
+          "storedPage": 390,
+          "truePages": [
+            48
+          ],
+          "similarity": 0.6658,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " is normative. Once an authentication event has taken place, it is often desirable to allow the subscriber to continue u"
+        }
+      ]
+    },
+    {
+      "id": "dig-17",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "concept",
+      "relevantPages": [
+        40
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 316,
+          "truePages": [
+            40
+          ],
+          "similarity": 0.6672,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "uthenticator output along with earlier messages from the protocol that are unique to the particular TLS connection being"
+        },
+        {
+          "rank": 2,
+          "storedPage": 435,
+          "truePages": [
+            55
+          ],
+          "similarity": 0.6663,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "f that verifier. Online dictionary attacks are used to guess memorized secrets. Online guessing is used to guess authent"
+        },
+        {
+          "rank": 3,
+          "storedPage": 421,
+          "truePages": [
+            52
+          ],
+          "similarity": 0.666,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " Out - of - band secrets may be intercepted by an attacker and used to authenticate their own session. • Something you a"
+        },
+        {
+          "rank": 4,
+          "storedPage": 320,
+          "truePages": [
+            40
+          ],
+          "similarity": 0.6619,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "to be compromised and stor ed secrets stolen, authentication protocols that do not require the verifier to persistently "
+        },
+        {
+          "rank": 5,
+          "storedPage": 313,
+          "truePages": [
+            39,
+            40
+          ],
+          "similarity": 0.6604,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "y is known to the verifier). The verifier SHALL validate the signature or other information used to prove verifier imper"
+        }
+      ]
+    },
+    {
+      "id": "ts-01",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        22
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 60,
+          "truePages": [
+            22
+          ],
+          "similarity": 0.794,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ngwithanecdotes,soIdon’tmeantopickonthepeople Iquoted. Butwemightwantevidencethatismorepersuasiveandananswerthatis morer"
+        },
+        {
+          "rank": 2,
+          "storedPage": 58,
+          "truePages": [
+            21
+          ],
+          "similarity": 0.7923,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "andsomepeoplesayit’stheotherway around:firstbabiescomeearly. Inmanyofthesediscussions,peopleprovidedatatosupporttheircla"
+        },
+        {
+          "rank": 3,
+          "storedPage": 61,
+          "truePages": [
+            22
+          ],
+          "similarity": 0.7585,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "wemighthavetocomparealargenumberofpregnancies tobesurethatadifferenceexists. • Selectionbias:Peoplewhojoinadiscussionoft"
+        },
+        {
+          "rank": 4,
+          "storedPage": 59,
+          "truePages": [
+            21,
+            22
+          ],
+          "similarity": 0.7395,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "secondone isgoingtocomeouttwoweeksearly!!” “Idon’tthinkthatcanbetruebecausemysisterwasmymother’s firstandshewasearly,asw"
+        },
+        {
+          "rank": 5,
+          "storedPage": 57,
+          "truePages": [
+            21
+          ],
+          "similarity": 0.7219,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "isthatdatacombinedwithpracticalmethodscan answerquestionsandguidedecisionsunderuncertainty. Asanexample,Ipresentacasestu"
+        }
+      ]
+    },
+    {
+      "id": "ts-02",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "factual",
+      "relevantPages": [
+        47
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 3,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 139,
+          "truePages": [
+            43
+          ],
+          "similarity": 0.7297,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "arly(orlate).Whenpeopleaskthisquestion,theyareusuallyinterestedin full-termpregnancies,soforthisanalysisIwillfocusonpreg"
+        },
+        {
+          "rank": 2,
+          "storedPage": 58,
+          "truePages": [
+            21
+          ],
+          "similarity": 0.709,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "andsomepeoplesayit’stheotherway around:firstbabiescomeearly. Inmanyofthesediscussions,peopleprovidedatatosupporttheircla"
+        },
+        {
+          "rank": 3,
+          "storedPage": 154,
+          "truePages": [
+            47
+          ],
+          "similarity": 0.7042,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "tis38.523. Thedifferenceis0.078weeks,whichworksoutto13hours.Asafractionof thetypicalpregnancylength,thisdifferenceisabou"
+        },
+        {
+          "rank": 4,
+          "storedPage": 157,
+          "truePages": [
+            48
+          ],
+          "similarity": 0.6863,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ghtbetweenmen andwomenisabout1.7standarddeviations(see https://en.wikipedia. org/wiki/Effect_size ). 2.10Reportingresult"
+        },
+        {
+          "rank": 5,
+          "storedPage": 202,
+          "truePages": [
+            62
+          ],
+          "similarity": 0.6816,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "dbyPmf. Exercise3.3 Istartedwiththequestion,“Arefirstbabiesmorelikelytobe late?”Toaddressit,Icomputedthedifferenceinmean"
+        }
+      ]
+    },
+    {
+      "id": "ts-03",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "definition",
+      "relevantPages": [
+        47
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 2,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 167,
+          "truePages": [
+            50
+          ],
+          "similarity": 0.6892,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "omthecentraltendency. • spread :Ameasureofhowspreadoutthevaluesinadistributionare. • summarystatistic :Astatisticthatqua"
+        },
+        {
+          "rank": 2,
+          "storedPage": 155,
+          "truePages": [
+            47
+          ],
+          "similarity": 0.689,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "rwaytoconveythesizeoftheeffectistocomparethedifference betweengroupstothevariabilitywithingroups.Cohen’s d isastatistic "
+        },
+        {
+          "rank": 3,
+          "storedPage": 156,
+          "truePages": [
+            47,
+            48
+          ],
+          "similarity": 0.6604,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "oup2): diff=group1.mean()-group2.mean() var1=group1.var() var2=group2.var() n1,n2=len(group1),len(group2) 28Chapter2.Dis"
+        },
+        {
+          "rank": 4,
+          "storedPage": 153,
+          "truePages": [
+            47
+          ],
+          "similarity": 0.6574,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ks.”Varianceisusefulinsome calculations,butitisnotagoodsummarystatistic. 2.9Effectsize An effectsize isasummarystatistic"
+        },
+        {
+          "rank": 5,
+          "storedPage": 157,
+          "truePages": [
+            48
+          ],
+          "similarity": 0.6523,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ghtbetweenmen andwomenisabout1.7standarddeviations(see https://en.wikipedia. org/wiki/Effect_size ). 2.10Reportingresult"
+        }
+      ]
+    },
+    {
+      "id": "ts-04",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "factual",
+      "relevantPages": [
+        57
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 2,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 185,
+          "truePages": [
+            56
+          ],
+          "similarity": 0.7087,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "typicallytake4–5classespersemester,butprofessorsoften teach1or2. • Thenumberofstudentswhoenjoyasmallclassissmall,butthen"
+        },
+        {
+          "rank": 2,
+          "storedPage": 186,
+          "truePages": [
+            56,
+            57
+          ],
+          "similarity": 0.706,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ollowingdistributionofsizes: sizecount 5-98 10-148 15-1914 20-244 25-296 30-3412 35-398 40-443 45-492 3.4.Theclasssizepa"
+        },
+        {
+          "rank": 3,
+          "storedPage": 187,
+          "truePages": [
+            57
+          ],
+          "similarity": 0.6635,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ats2.Pmf(d,label='actual') print('mean',pmf.Mean()) Butifyousurveyagroupofstudents,askthemhowmanystudentsarein theirclas"
+        },
+        {
+          "rank": 4,
+          "storedPage": 184,
+          "truePages": [
+            56
+          ],
+          "similarity": 0.6582,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "hisexamplethe“classsizeparadox.” 36Chapter3.Probabilitymassfunctions Figure3.2:Difference,inpercentagepoints,byweek. Atm"
+        },
+        {
+          "rank": 5,
+          "storedPage": 188,
+          "truePages": [
+            57
+          ],
+          "similarity": 0.6242,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "berofstudents intheclass. defBiasPmf(pmf,label): new_pmf=pmf.Copy(label=label) forx,pinpmf.Items(): new_pmf.Mult(x,x) ne"
+        }
+      ]
+    },
+    {
+      "id": "ts-05",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "factual",
+      "relevantPages": [
+        67
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 216,
+          "truePages": [
+            67
+          ],
+          "similarity": 0.6738,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "es) returnpercentile_rank Asanexample,ifthescoresinthesequencewere55,66,77,88and99,and yougotthe88,thenyourpercentileran"
+        },
+        {
+          "rank": 2,
+          "storedPage": 218,
+          "truePages": [
+            67
+          ],
+          "similarity": 0.6537,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "s77. Thisimplementationof Percentile isnotefficient.Abetterapproachisto usethepercentileranktocomputetheindexofthecorres"
+        },
+        {
+          "rank": 3,
+          "storedPage": 217,
+          "truePages": [
+            67
+          ],
+          "similarity": 0.6536,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "hevaluesandsearchfor theoneyouwant: defPercentile(scores,percentile_rank): scores.sort() forscoreinscores: ifPercentileR"
+        },
+        {
+          "rank": 4,
+          "storedPage": 215,
+          "truePages": [
+            66,
+            67
+          ],
+          "similarity": 0.6395,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "centile,”youdidaswellasorbetterthan90%of thepeoplewhotooktheexam. Here’showyoucouldcomputethepercentilerankofavalue, you"
+        },
+        {
+          "rank": 5,
+          "storedPage": 240,
+          "truePages": [
+            74
+          ],
+          "similarity": 0.6199,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "4,whichwas97thinafieldof1633.Ibeatortied1537runnersout of1633,somypercentilerankinthefieldis94%. Moregenerally,givenposi"
+        }
+      ]
+    },
+    {
+      "id": "ts-06",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "definition",
+      "relevantPages": [
+        77,
+        93
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 2,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 295,
+          "truePages": [
+            91
+          ],
+          "similarity": 0.6664,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "fitanan- alyticdistribution,buttheseobservationscanprovideinsightintophysical systems.Sometimeswecanexplainwhyanobserved"
+        },
+        {
+          "rank": 2,
+          "storedPage": 248,
+          "truePages": [
+            76,
+            77
+          ],
+          "similarity": 0.6509,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "once;“without replacement”meansthatonceavalueischosen,itisremovedfromthe population. Chapter5 Modelingdistributions Thed"
+        },
+        {
+          "rank": 3,
+          "storedPage": 329,
+          "truePages": [
+            100
+          ],
+          "similarity": 0.6454,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "0Chapter6.Probabilitydensityfunctions CDF (CMF) PMF sum diff integrate PDF CDF smooth bin Continuous Cumulative Discrete"
+        },
+        {
+          "rank": 4,
+          "storedPage": 293,
+          "truePages": [
+            90
+          ],
+          "similarity": 0.6404,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "butnot 1,so1 − p canbe1butnot0,so log(1-p) isalwaysdefined. 5.7Whymodel? Atthebeginningofthischapter,Isaidthatmanyrealwo"
+        },
+        {
+          "rank": 5,
+          "storedPage": 296,
+          "truePages": [
+            91
+          ],
+          "similarity": 0.6387,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "erential_attachment .). Also,analyticdistributionslendthemselvestomathematicalanalysis,aswe willseeinChapter14. Butitisi"
+        }
+      ]
+    },
+    {
+      "id": "ts-07",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        106
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 2,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 359,
+          "truePages": [
+            107,
+            108
+          ],
+          "similarity": 0.6962,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "butotherthanthat,theyarehardtointerpret.Sampleskewness islessrobust;thatis,itismoresusceptibletooutliers.Asaresultitisle"
+        },
+        {
+          "rank": 2,
+          "storedPage": 353,
+          "truePages": [
+            106
+          ],
+          "similarity": 0.6821,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ngsampleskewnessisusuallynotagoodidea.Ifthere areanyoutliers,theyhaveadisproportionateeffecton g 1 . Anotherwaytoevaluat"
+        },
+        {
+          "rank": 3,
+          "storedPage": 352,
+          "truePages": [
+            105,
+            106
+          ],
+          "similarity": 0.673,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ndardizedmoment ,whichmeansthatithasbeennor- malizedsoithasnounits. 86Chapter6.Probabilitydensityfunctions Negativeskewn"
+        },
+        {
+          "rank": 4,
+          "storedPage": 368,
+          "truePages": [
+            110
+          ],
+          "similarity": 0.6717,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "deviationfromthemean,raised toapower. • standardizedmoment :Aratioofmomentsthathasnounits. • skewness :Ameasureofhowasym"
+        },
+        {
+          "rank": 5,
+          "storedPage": 355,
+          "truePages": [
+            106,
+            107
+          ],
+          "similarity": 0.6597,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "anSkewness(xs): median=Median(xs) mean=RawMoment(xs,1) var=CentralMoment(xs,2) std=math.sqrt(var) gp=3*(mean-median)/std"
+        }
+      ]
+    },
+    {
+      "id": "ts-08",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        121
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 405,
+          "truePages": [
+            121
+          ],
+          "similarity": 0.7222,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "on Pearson’scorrelationworkswelliftherelationshipbetweenvariablesislinear andifthevariablesareroughlynormal.Butitisnotro"
+        },
+        {
+          "rank": 2,
+          "storedPage": 388,
+          "truePages": [
+            116
+          ],
+          "similarity": 0.7043,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "tionisthatthevariableswewanttocompare areoftennotexpressedinthesameunits.Andeveniftheyareinthesame units,theycomefromdif"
+        },
+        {
+          "rank": 3,
+          "storedPage": 406,
+          "truePages": [
+            121
+          ],
+          "similarity": 0.6892,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "sitsindexin thesortedsample.Forexample,inthesample [1,2,5,7] therankof thevalue5is3,becauseitappearsthirdinthesortedlist"
+        },
+        {
+          "rank": 4,
+          "storedPage": 404,
+          "truePages": [
+            120,
+            121
+          ],
+          "similarity": 0.6758,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "lkaboutestimatingslopesoon). Thethirdrowshowsvariablesthatareclearlyrelated,butbecausetherela- tionshipisnonlinear,theco"
+        },
+        {
+          "rank": 5,
+          "storedPage": 408,
+          "truePages": [
+            121
+          ],
+          "similarity": 0.6667,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "rnxs.corr(ys,method='spearman') TheSpearmanrankcorrelationfortheBRFSSdatais0.54,alittlehigher thanthePearsoncorrelation,"
+        }
+      ]
+    },
+    {
+      "id": "ts-09",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        122
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 412,
+          "truePages": [
+            122
+          ],
+          "similarity": 0.7307,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "notimplycausation,”whichissopithyit hasitsownWikipediapage: http://wikipedia.org/wiki/Correlation_ does_not_imply_causat"
+        },
+        {
+          "rank": 2,
+          "storedPage": 413,
+          "truePages": [
+            122
+          ],
+          "similarity": 0.6842,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "thedirectionofcausation, butitdoesnotprecludethepossibilitythatsomethingelsecausesboth AandB. 2.Userandomness.Ifyoudivid"
+        },
+        {
+          "rank": 3,
+          "storedPage": 411,
+          "truePages": [
+            122
+          ],
+          "similarity": 0.6472,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "riablesAandBarecorrelated,therearethreepossibleexplanations:A causesB,orBcausesA,orsomeothersetoffactorscausesbothAandB."
+        },
+        {
+          "rank": 4,
+          "storedPage": 5,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6423,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": true,
+          "preview": " linearfits. • Multivariateanalysis:Ifthereareapparentrelationshipsbetweenvari- ables,Iusemultipleregressiontoaddcontrol"
+        },
+        {
+          "rank": 5,
+          "storedPage": 415,
+          "truePages": [
+            123
+          ],
+          "similarity": 0.6383,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "edicine,anda controlgroup thatreceivesnointervention,oranothertreatmentwhose effectsareknown. Arandomizedcontrolledtrial"
+        }
+      ]
+    },
+    {
+      "id": "ts-10",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "factual",
+      "relevantPages": [
+        126
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 426,
+          "truePages": [
+            126
+          ],
+          "similarity": 0.7461,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "es(forexample,whether thereareoutliers)andonwhatthegoalis.Areyoutryingtominimizeerrors, ormaximizeyourchanceofgettingthe"
+        },
+        {
+          "rank": 2,
+          "storedPage": 424,
+          "truePages": [
+            125,
+            126
+          ],
+          "similarity": 0.7189,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "or . Usingthesamplemeantoestimate µ issoobviousthatitishardtoimagine areasonablealternative.Butsupposewechangethegamebyi"
+        },
+        {
+          "rank": 3,
+          "storedPage": 425,
+          "truePages": [
+            126
+          ],
+          "similarity": 0.6887,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ion [-0.441,1.774,-0.101,-1.138,2.975,-213.8] Nowwhat’syourestimateof µ ?Ifyouusethesamplemean,yourguessis -35.12.Isthat"
+        },
+        {
+          "rank": 4,
+          "storedPage": 432,
+          "truePages": [
+            127
+          ],
+          "similarity": 0.686,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "minimizingMSEisnotthebest strategy. Asanotherexample,supposeIrollthreesix-sideddiceandaskyoutopredict thetotal.Ifyougeti"
+        },
+        {
+          "rank": 5,
+          "storedPage": 433,
+          "truePages": [
+            127,
+            128
+          ],
+          "similarity": 0.6774,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "estchanceofbeingright,whichisa maximumlikelihoodestimator (MLE).Ifyoupick10or11,yourchance ofwinningis1in8,andthat’stheb"
+        }
+      ]
+    },
+    {
+      "id": "ts-11",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "definition",
+      "relevantPages": [
+        131,
+        136
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 449,
+          "truePages": [
+            131
+          ],
+          "similarity": 0.7328,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "nswer,on average.After1000tries,thelowestresultis82kg,andthehighestis98kg. Thisrangesuggeststhattheestimatemightbeoffbya"
+        },
+        {
+          "rank": 2,
+          "storedPage": 453,
+          "truePages": [
+            132
+          ],
+          "similarity": 0.6946,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ianmethods (seemybook, ThinkBayes ). Thesamplingdistributionanswersadifferentquestion:itgivesyoua senseofhowreliableanes"
+        },
+        {
+          "rank": 3,
+          "storedPage": 451,
+          "truePages": [
+            132
+          ],
+          "similarity": 0.6765,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "onfidenceintervalsarethesourceofmuchconfusion: • Peopleoftenconfusestandarderrorandstandarddeviation.Remember thatstanda"
+        },
+        {
+          "rank": 4,
+          "storedPage": 444,
+          "truePages": [
+            130
+          ],
+          "similarity": 0.6728,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "results,youwouldreport90kg. Buthowconfidentshouldyoubeinthisestimate?Ifyouonlyweigh n =9 gorillasoutofamuchlargerpopulat"
+        },
+        {
+          "rank": 5,
+          "storedPage": 858,
+          "truePages": [
+            238
+          ],
+          "similarity": 0.671,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "reachsimulatedexperiment,andaccu- mulatingthedistributionofestimates. Theresultisanapproximationofthesamplingdistributio"
+        }
+      ]
+    },
+    {
+      "id": "ts-12",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        141
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 490,
+          "truePages": [
+            141
+          ],
+          "similarity": 0.7303,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ewillseelater)thep-valuede- pendsonthechoiceoftheteststatisticsandthemodelofthenullhypothesis. Sop-valuesshouldnotbecons"
+        },
+        {
+          "rank": 2,
+          "storedPage": 518,
+          "truePages": [
+            147,
+            148
+          ],
+          "similarity": 0.7033,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "resholdseriously, wewouldconsiderthiseffectstatisticallysignificant.Butconsideringthetwo teststogther,Iwouldsaythatthere"
+        },
+        {
+          "rank": 3,
+          "storedPage": 537,
+          "truePages": [
+            152
+          ],
+          "similarity": 0.6761,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "edinthischapterisnot,strictly speaking,goodpractice. First,Iperformedmultipletests.Ifyourunonehypothesistest,thechance o"
+        },
+        {
+          "rank": 4,
+          "storedPage": 158,
+          "truePages": [
+            48
+          ],
+          "similarity": 0.6691,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "erestedinany(real)effect,nomatterhowsmall.Adoctormightonly careabouteffectsthatare clinicallysignificant ;thatis,differe"
+        },
+        {
+          "rank": 5,
+          "storedPage": 489,
+          "truePages": [
+            140,
+            141
+          ],
+          "similarity": 0.6686,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "thetime. 2 AdaptedfromMacKay, InformationTheory,Inference,andLearningAlgorithms , 2003. 9.3.Testingadifferenceinmeans121"
+        }
+      ]
+    },
+    {
+      "id": "ts-13",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "definition",
+      "relevantPages": [
+        151,
+        155
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 535,
+          "truePages": [
+            151,
+            152
+          ],
+          "similarity": 0.7677,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "weshouldexpectapositivetestonly30%ofthetime.This “correctpositiverate”iscalledthe power ofthetest,orsometimes“sensi- tiv"
+        },
+        {
+          "rank": 2,
+          "storedPage": 528,
+          "truePages": [
+            150
+          ],
+          "similarity": 0.7127,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ificant?Thisprobabilityisthe false positiverate . • Iftheeffectisreal,whatisthechancethatthehypothesistestwillfail? This"
+        },
+        {
+          "rank": 3,
+          "storedPage": 530,
+          "truePages": [
+            150
+          ],
+          "similarity": 0.7,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "reaterthan95%;thatis,if t exceedsthe95thpercentile.Andhowoftendoesavaluechosenfrom CDF T exceedthe95thpercentile?5%ofthe"
+        },
+        {
+          "rank": 4,
+          "storedPage": 534,
+          "truePages": [
+            151
+          ],
+          "similarity": 0.6849,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ata=firsts.prglngth.values,others.prglngth.values neg_rate=FalseNegRate(data) Theresultisabout70%,whichmeansthatiftheact"
+        },
+        {
+          "rank": 5,
+          "storedPage": 549,
+          "truePages": [
+            154,
+            155
+          ],
+          "similarity": 0.6668,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "gative?” • one-sidedtest :Atestthatasks,“Whatisthechanceofaneffectas bigastheobservedeffect,andwiththesamesign?” 9.13.Gl"
+        }
+      ]
+    },
+    {
+      "id": "ts-14",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        165
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 583,
+          "truePages": [
+            165
+          ],
+          "similarity": 0.8097,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "eastrongcorrelation.But R 2 = ρ 2 =0 . 52,soSATscoresaccountforonly52%ofvarianceinIQ. IQscoresarenormalizedwith Std(ys)="
+        },
+        {
+          "rank": 2,
+          "storedPage": 582,
+          "truePages": [
+            165
+          ],
+          "similarity": 0.7644,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ispresentedinrelationto Std(ys) . Forexample,whenpeopletalkaboutthevalidityoftheSAT(astandardized testusedforcollegeadmi"
+        },
+        {
+          "rank": 3,
+          "storedPage": 581,
+          "truePages": [
+            165
+          ],
+          "similarity": 0.6523,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "efficientofdeterminationand Pearson’scoefficientofcorrelation: R 2 = ρ 2 .Forexample,if ρ is0.8or-0.8, R 2 =0 . 64. Alth"
+        },
+        {
+          "rank": 4,
+          "storedPage": 580,
+          "truePages": [
+            165
+          ],
+          "similarity": 0.6491,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "stheMSEofyourguessesusingthemodel, Var(ys) istheMSE withoutit.SotheirratioisthefractionofMSEthatremainsifyouusethe model"
+        },
+        {
+          "rank": 5,
+          "storedPage": 400,
+          "truePages": [
+            119
+          ],
+          "similarity": 0.6217,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "sitive,wesaythatthecorrelationispositive,whichmeansthatwhenone variableishigh,theothertendstobehigh.If ρ isnegative,thec"
+        }
+      ]
+    },
+    {
+      "id": "ts-15",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        185
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 665,
+          "truePages": [
+            185
+          ],
+          "similarity": 0.7245,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "re o istheoddsinfavorofaparticularoutcome;intheexample, o would betheoddsofhavingaboy. Supposewehaveestimatedtheparamete"
+        },
+        {
+          "rank": 2,
+          "storedPage": 666,
+          "truePages": [
+            185
+          ],
+          "similarity": 0.7132,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "poolscenariowecouldcomputethepredictiveprobabilityof havingaboy.Buthowdoweestimatetheparameters? 11.7Estimatingparameter"
+        },
+        {
+          "rank": 3,
+          "storedPage": 664,
+          "truePages": [
+            184,
+            185
+          ],
+          "similarity": 0.7104,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "chanceoflosing. Oddsandprobabilitiesaredifferentrepresentationsofthesameinformation. Givenaprobability,youcancomputetheo"
+        },
+        {
+          "rank": 4,
+          "storedPage": 670,
+          "truePages": [
+            186
+          ],
+          "similarity": 0.6846,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ofthedatais0.18.The goaloflogisticregressionistofindparametersthatmaximizethislike- lihood.Todothat,moststatisticspackag"
+        },
+        {
+          "rank": 5,
+          "storedPage": 667,
+          "truePages": [
+            185,
+            186
+          ],
+          "similarity": 0.6818,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "chis thesetofparametersthatmaximizesthelikelihoodofthedata.Forexample, supposewehavethefollowingdata: >>>y=np.array([0,1"
+        }
+      ]
+    },
+    {
+      "id": "ts-16",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "factual",
+      "relevantPages": [
+        219
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 791,
+          "truePages": [
+            219
+          ],
+          "similarity": 0.6858,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "zardFunction provides __getitem__ ,sowecanevaluateitlikethis: >>>hf=sf.MakeHazard() >>>hf[39] 0.49689 Soofallpregnancies"
+        },
+        {
+          "rank": 2,
+          "storedPage": 843,
+          "truePages": [
+            232
+          ],
+          "similarity": 0.6835,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "length. Figure13.6(left)showstheexpectedremainingpregnancylengthasafunc- tionofthecurrentduration.Forexample,duringWeek0"
+        },
+        {
+          "rank": 3,
+          "storedPage": 788,
+          "truePages": [
+            218
+          ],
+          "similarity": 0.6456,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ound39weeks,whichisthemostcommonpregnancy length. 13.2Hazardfunction Fromthesurvivalcurvewecanderivethe hazardfunction ;"
+        },
+        {
+          "rank": 4,
+          "storedPage": 154,
+          "truePages": [
+            47
+          ],
+          "similarity": 0.6455,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "tis38.523. Thedifferenceis0.078weeks,whichworksoutto13hours.Asafractionof thetypicalpregnancylength,thisdifferenceisabou"
+        },
+        {
+          "rank": 5,
+          "storedPage": 844,
+          "truePages": [
+            232,
+            233
+          ],
+          "similarity": 0.6322,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "eks,theex- pectedremaininglifetimehasdroppedbyonly9weeks,to25.Afterthatthe curvedropsfaster,byaboutaweekperweek. Between"
+        }
+      ]
+    },
+    {
+      "id": "ts-17",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        242,
+        243
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 2,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 873,
+          "truePages": [
+            241
+          ],
+          "similarity": 0.7436,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "fweaddvaluesdrawnfromnormal distributions,thedistributionofthesumisnormal.Mostotherdistributions don’thavethisproperty;i"
+        },
+        {
+          "rank": 2,
+          "storedPage": 875,
+          "truePages": [
+            242
+          ],
+          "similarity": 0.7366,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "recorrelated,the CLTdoesn’tapply(althoughthisisseldomaprobleminpractice). • Thevalueshavetocomefromthesamedistribution(a"
+        },
+        {
+          "rank": 3,
+          "storedPage": 882,
+          "truePages": [
+            243
+          ],
+          "similarity": 0.7042,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "row)showssimilarresultsforalognormaldistribution. Lognormaldistributionsaregenerallymoreskewedthanexponentialdistri- but"
+        },
+        {
+          "rank": 4,
+          "storedPage": 877,
+          "truePages": [
+            242
+          ],
+          "similarity": 0.6807,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "esumofalargenumberofsmalleffects,sotheir distributiontendstobenormal. 14.5TestingtheCLT ToseehowtheCentralLimitTheoremwo"
+        },
+        {
+          "rank": 5,
+          "storedPage": 874,
+          "truePages": [
+            241,
+            242
+          ],
+          "similarity": 0.6757,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "pecifically,ifthedistributionofthevalueshasmeanandstandard deviation µ and σ ,thedistributionofthesumisapproximately N ("
+        }
+      ]
+    }
+  ]
+}
