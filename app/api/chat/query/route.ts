@@ -1,23 +1,13 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabaseClient";
-import { embedQueryGemini } from "@/lib/gemini";
-import { GoogleGenAI } from "@google/genai";
-
-// Type definitions
-interface MatchResult {
-  pdf_id: string;
-  page: number;
-  content: string;
-}
+import { gemini } from "@/lib/gemini";
+import { prisma } from "@/lib/prisma";
+import { retrieveChunks } from "@/lib/retrieve";
 
 interface Citation {
   pdfId: string;
   page: number;
+  chunkId: string | null;
 }
-
-const gemini = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY!,
-});
 
 export const runtime = "nodejs";
 
@@ -27,32 +17,28 @@ export async function POST(req: Request) {
   if (!pdfIds?.length || !question)
     return NextResponse.json({ error: "Missing pdfIds or question" }, { status: 400 });
 
-  const supabase = supabaseServer();
+  // 1️⃣ Retrieve the most relevant chunks (query embedded with RETRIEVAL_QUERY)
+  let matches;
+  try {
+    matches = await retrieveChunks(question, pdfIds, topK);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Retrieval failed";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 
-  // 1️⃣ Embed the user query
-  const qvec = await embedQueryGemini(question, 1536);
-
-  // 2️⃣ Retrieve most relevant chunks
-  const { data: matches, error } = await supabase.rpc("match_embeddings", {
-    query_embedding: qvec,
-    match_count: topK,
-    filter_pdf_ids: pdfIds,
-  });
-
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
-
-  // 3️⃣ Build context for Gemini
+  // 2️⃣ Build context with readable PDF titles and real page numbers
+  const pdfs = await prisma.pdf.findMany({ where: { id: { in: pdfIds } }, select: { id: true, title: true } });
+  const titleOf = new Map(pdfs.map((p) => [p.id, p.title]));
   const context = matches
     .map(
-      (m: MatchResult, i: number) =>
-        `Excerpt ${i + 1} (PDF: ${m.pdf_id}, p.${m.page}): "${m.content.trim()}"`
+      (m, i) =>
+        `Excerpt ${i + 1} (${titleOf.get(m.pdf_id) ?? m.pdf_id}, p.${m.page}): "${m.content.trim()}"`
     )
     .join("\n\n");
 
   const prompt = `
 You are a helpful tutor that answers using only the provided excerpts.
-When you use information, cite it inline as (PDF, p.X).
+When you use information, cite it inline as (PDF title, p.X) using the page shown for that excerpt.
 If answer not found, reply “I couldn’t find that in the provided texts.”
 
 Excerpts:
@@ -62,7 +48,7 @@ Question: ${question}
 Answer:
 `;
 
-  // 4️⃣ Ask Gemini for the final answer
+  // 3️⃣ Ask Gemini for the final answer
   const result = await gemini.models.generateContent({
     model: "models/gemini-2.5-flash",
     contents: [{ role: "user", parts: [{ text: prompt }] }],
@@ -72,9 +58,6 @@ Answer:
 
   return NextResponse.json({
     answer,
-    citations: matches.map((m: MatchResult): Citation => ({
-      pdfId: m.pdf_id,
-      page: m.page,
-    })),
+    citations: matches.map((m): Citation => ({ pdfId: m.pdf_id, page: m.page, chunkId: m.chunk_id })),
   });
 }

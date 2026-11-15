@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "vercel-build": "prisma generate && next build",
-    "eval": "node --env-file=.env --import tsx eval/run-eval.ts"
+    "eval": "node --env-file=.env --import tsx eval/run-eval.ts",
+    "test": "node --import tsx --import ./tests/setup.ts --test tests/*.test.ts"
   },
   "dependencies": {
     "@google/genai": "^1.22.0",

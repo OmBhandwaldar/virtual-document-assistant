@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseClient";
-import { embedTextsGemini } from "@/lib/gemini";
-import { randomUUID } from "crypto";
+import { embedTexts, DOCUMENT_TASK_TYPE, EMBEDDING_DIM } from "@/lib/gemini";
 
-// Type definitions
 interface ChunkData {
   id: string;
   text: string;
@@ -13,8 +11,9 @@ interface ChunkData {
 export const runtime = "nodejs";
 
 /**
- * Body: { pdfId: string, batchSize?: number }
- * Call repeatedly until response says "No chunks left to embed".
+ * Backfills embeddings for chunks that don't have one yet (normally not needed: ingestion
+ * embeds every chunk). Body: { pdfId: string, batchSize?: number }.
+ * Call repeatedly until the response says "No chunks left to embed".
  */
 export async function POST(req: Request) {
   const { pdfId, batchSize = 10 } = await req.json();
@@ -24,40 +23,33 @@ export async function POST(req: Request) {
 
   const supabase = supabaseServer();
 
-  // 1) Pull up to N not-yet-embedded chunks
-  const { data: chunks, error: fetchErr } = await supabase.rpc(
-    "get_chunks_without_embeddings",
-    { _pdf_id: pdfId, _limit: batchSize }
-  );
-
+  const { data: chunks, error: fetchErr } = await supabase.rpc("get_chunks_without_embeddings", {
+    _pdf_id: pdfId,
+    _limit: batchSize,
+  });
   if (fetchErr) return NextResponse.json({ error: fetchErr.message }, { status: 500 });
   if (!chunks || chunks.length === 0) {
     return NextResponse.json({ message: "No chunks left to embed", pdfId });
   }
 
-  // 2) Create embeddings in a single batch call to Gemini
-  const texts = chunks.map((c: ChunkData) => c.text);
-  const vectors = await embedTextsGemini(texts, { dim: 1536 });
-
-  // 3) Prepare rows for insert
-  const rows = chunks.map((c: ChunkData, i: number) => ({
-    id: randomUUID(),
-    pdf_id: pdfId,
-    chunk_id: c.id,
-    content: c.text.slice(0, 200),
-    embedding: vectors[i],
-    page: c.page,
-  }));
-
-  // 4) Insert (upsert to avoid duplicates if re-run)
-  // Requires a UNIQUE constraint on chunk_id (added above)
-  const { error: insertErr } = await supabase
-    .from("embeddings")
-    .upsert(rows, { onConflict: "chunk_id" });
-
-  if (insertErr) {
-    return NextResponse.json({ error: insertErr.message }, { status: 500 });
+  try {
+    // Throws after retries instead of returning fewer vectors than chunks.
+    const vectors = await embedTexts(
+      chunks.map((c: ChunkData) => c.text),
+      { dim: EMBEDDING_DIM, taskType: DOCUMENT_TASK_TYPE }
+    );
+    const rows = chunks.map((c: ChunkData, i: number) => ({
+      pdf_id: pdfId,
+      chunk_id: c.id,
+      content: c.text,
+      embedding: vectors[i],
+      page: c.page,
+    }));
+    const { error: insertErr } = await supabase.from("embeddings").upsert(rows, { onConflict: "chunk_id" });
+    if (insertErr) return NextResponse.json({ error: insertErr.message }, { status: 500 });
+    return NextResponse.json({ success: true, inserted: rows.length, pdfId });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 502 });
   }
-
-  return NextResponse.json({ success: true, inserted: rows.length, pdfId });
 }
