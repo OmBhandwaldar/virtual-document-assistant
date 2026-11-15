@@ -1,14 +1,15 @@
 // eval/run-eval.ts
 // Retrieval-quality and citation-accuracy eval for the RAG pipeline.
 //
-//   npm run eval -- --out eval/results/baseline.json [--label baseline] [--skip-ingest]
+//   npm run eval -- --out eval/results/after.json [--label after] [--skip-ingest]
+//                   [--target-words 350 --overlap-words 50]   (default: the app default chunking)
 //
 // 1. Ingests every PDF in eval/pdfs through the app's real ingestion code
 //    (eval/lib/ingestAdapter.ts) under a dedicated chat titled "__rag_eval__".
 //    Only rows/files belonging to that chat are ever deleted; other data is untouched.
-// 2. For each question in eval/questions.json runs the same retrieval as
-//    app/api/chat/query/route.ts: embed the question with embedQueryGemini, then
-//    the match_embeddings RPC with topK=5, filtered to that question's PDF.
+// 2. For each question in eval/questions.json runs lib/retrieve.ts retrieveChunks — the
+//    same function app/api/chat/query/route.ts uses — with topK=5, filtered to that
+//    question's PDF.
 // 3. Scores the results and writes a JSON report.
 //
 // Metrics (relevant pages R = {answerPage} ∪ acceptablePages[].page):
@@ -24,8 +25,9 @@ import path from "node:path";
 import { execSync } from "node:child_process";
 import { prisma } from "@/lib/prisma";
 import { supabaseServer } from "@/lib/supabaseClient";
-import { embedQueryGemini } from "@/lib/gemini";
-import { PIPELINE, ingestPdf } from "./lib/ingestAdapter";
+import { retrieveChunks } from "@/lib/retrieve";
+import { DEFAULT_CHUNKING } from "@/lib/ingest";
+import { pipelineConfig, ingestPdf } from "./lib/ingestAdapter";
 import { buildPageIndexes, locateChunk, type PageIndex } from "./lib/pageText";
 
 const TOP_K = 5;
@@ -77,6 +79,10 @@ const arg = (name: string, def?: string) => {
 const flag = (name: string) => args.includes(`--${name}`);
 const OUT = arg("out", `eval/results/run-${new Date().toISOString().replace(/[:.]/g, "-")}.json`)!;
 const LABEL = arg("label", path.basename(OUT, ".json"))!;
+const CHUNKING = {
+  targetWords: Number(arg("target-words", String(DEFAULT_CHUNKING.targetWords))),
+  overlapWords: Number(arg("overlap-words", String(DEFAULT_CHUNKING.overlapWords))),
+};
 
 // Silence the app's chatty console.log (and Prisma query logs) while still printing our own progress.
 const log = console.log.bind(console);
@@ -118,14 +124,13 @@ async function main() {
     await cleanEvalData(chat.id);
     for (const f of pdfFiles) {
       const t0 = Date.now();
-      const id = await ingestPdf(fs.readFileSync(path.join(PDF_DIR, f)), f, chat.id);
+      const id = await ingestPdf(fs.readFileSync(path.join(PDF_DIR, f)), f, chat.id, CHUNKING);
       pdfIdByFile.set(f, id);
       log(`ingested ${f} -> ${id} in ${((Date.now() - t0) / 1000).toFixed(1)}s`);
     }
   }
 
   // ---- corpus stats + page indexes ----
-  const supabase = supabaseServer();
   const corpus: Record<string, unknown> = {};
   const pageIdx = new Map<string, PageIndex[]>();
   let embeddingDim: number | null = null;
@@ -150,14 +155,7 @@ async function main() {
   for (const q of questions) {
     const pdfId = pdfIdByFile.get(q.pdfFile)!;
     const relevant = new Set([q.answerPage, ...(q.acceptablePages ?? []).map((a) => a.page)]);
-    const qvec = await embedQueryGemini(q.question, 1536);
-    const { data, error } = await supabase.rpc("match_embeddings", {
-      query_embedding: qvec,
-      match_count: TOP_K,
-      filter_pdf_ids: [pdfId],
-    });
-    if (error) throw new Error(`match_embeddings failed: ${error.message}`);
-    const matches = (data ?? []) as Match[];
+    const matches = (await retrieveChunks(q.question, [pdfId], TOP_K)) as Match[];
     const results = matches.map((m, rank) => {
       const loc = locateChunk(m.content ?? "", pageIdx.get(q.pdfFile)!);
       return {
@@ -224,7 +222,10 @@ async function main() {
     createdAt: new Date().toISOString(),
     gitCommit,
     gitDirty,
-    pipeline: { ...PIPELINE, embedding: { ...PIPELINE.embedding, dimensionObservedInDb: embeddingDim } },
+    pipeline: (() => {
+      const p = pipelineConfig(CHUNKING);
+      return { ...p, embedding: { ...p.embedding, dimensionObservedInDb: embeddingDim } };
+    })(),
     retrieval: { rpc: "match_embeddings", topK: TOP_K, filter: "question's own PDF", index: "ivfflat (lists=100), default probes" },
     questionsFile: "eval/questions.json",
     corpus,

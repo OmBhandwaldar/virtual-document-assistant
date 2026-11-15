@@ -1,42 +1,41 @@
 // eval/lib/ingestAdapter.ts
-// How the eval ingests a PDF. It must go through the app's real ingestion code so
-// the numbers describe what production actually does.
+// How the eval ingests a PDF: through lib/ingest.ts, the same pipeline the upload and
+// re-index routes use. The only difference from /api/upload is that the eval skips the
+// storage upload (irrelevant to retrieval) and can override the chunking config.
 //
-// "upload-route": calls the POST handler of app/api/upload/route.ts directly with a
-// real multipart Request — the exact code path the UI uses.
-import { POST as uploadPOST } from "@/app/api/upload/route";
+// baseline.json / baseline-freetier-asis.json were produced by the pre-refactor pipeline
+// (inline in app/api/upload/route.ts) at commit b0527af; check out that commit to reproduce them.
+import { prisma } from "@/lib/prisma";
+import { ingestPdf as ingest, DEFAULT_CHUNKING, INGEST_CONFIG } from "@/lib/ingest";
+import { QUERY_TASK_TYPE } from "@/lib/gemini";
+import type { ChunkingConfig } from "@/lib/chunker";
 
-export interface PipelineConfig {
-  ingestPath: string;
-  parser: string;
-  chunking: Record<string, unknown>;
-  embedding: { model: string; dimension: number; documentTaskType: string | null; queryTaskType: string | null };
+export function pipelineConfig(chunking: ChunkingConfig) {
+  return {
+    ingestPath: "lib/ingest.ts ingestPdf (shared by /api/upload, /api/pdfs/[id]/index, scripts/reindex-pdfs.ts)",
+    parser: INGEST_CONFIG.parser,
+    chunking: {
+      method: INGEST_CONFIG.chunking,
+      unit: "words",
+      targetWords: chunking.targetWords,
+      overlapWords: chunking.overlapWords,
+      isAppDefault:
+        chunking.targetWords === DEFAULT_CHUNKING.targetWords && chunking.overlapWords === DEFAULT_CHUNKING.overlapWords,
+      pageAssignment: "real 1-based physical page; chunks never cross pages",
+    },
+    embedding: {
+      model: INGEST_CONFIG.embeddingModel,
+      dimension: INGEST_CONFIG.embeddingDim,
+      documentTaskType: INGEST_CONFIG.documentTaskType,
+      queryTaskType: QUERY_TASK_TYPE,
+    },
+  };
 }
 
-export const PIPELINE: PipelineConfig = {
-  ingestPath: "app/api/upload/route.ts POST (inline pipeline)",
-  parser: "pdf2json (lib/pdfParser.ts), whitespace collapsed to single spaces, page boundaries discarded",
-  chunking: {
-    method: "fixed-size character windows (lib/chunker.ts chunkText)",
-    unit: "characters",
-    size: 400,
-    overlap: 80,
-    pageAssignment: "page = chunk index + 1 (not a real page number)",
-  },
-  embedding: {
-    model: "gemini-embedding-001",
-    dimension: 1536,
-    documentTaskType: null,
-    queryTaskType: null,
-  },
-};
-
-export async function ingestPdf(buf: Buffer, fileName: string, chatId: string): Promise<string> {
-  const form = new FormData();
-  form.append("file", new File([new Uint8Array(buf)], fileName, { type: "application/pdf" }));
-  form.append("chatId", chatId);
-  const res = await uploadPOST(new Request("http://localhost/api/upload", { method: "POST", body: form }));
-  const body = (await res.json()) as { pdfId?: string; error?: string };
-  if (!res.ok || !body.pdfId) throw new Error(`upload route failed (${res.status}): ${body.error}`);
-  return body.pdfId;
+export async function ingestPdf(buf: Buffer, fileName: string, chatId: string, chunking: ChunkingConfig): Promise<string> {
+  const pdf = await prisma.pdf.create({
+    data: { title: fileName, filename: `eval_${fileName}`, storagePath: `eval/${fileName}`, pages: 0, chatId },
+  });
+  await ingest(pdf.id, buf, { chunking });
+  return pdf.id;
 }
