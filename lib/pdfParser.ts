@@ -1,87 +1,61 @@
-// Type definitions for PDF2JSON
-interface PDFTextRun {
-  T?: string;
+// lib/pdfParser.ts
+// Page-aware PDF text extraction.
+//
+// Uses pdf-parse (pdf.js), which keeps inter-word spacing. The previous pdf2json-based
+// parser dropped spaces for some PDFs (e.g. LaTeX books came out as
+// "Thisbookisanintroduction...") and discarded page boundaries, which made real page
+// citations impossible.
+
+export interface ParsedPdf {
+  /** Cleaned text per page; index 0 is physical page 1. */
+  pages: string[];
 }
 
-interface PDFTextItem {
-  R?: PDFTextRun[];
-}
-
-interface PDFPage {
-  Texts?: PDFTextItem[];
-}
-
-interface PDFData {
-  Pages?: PDFPage[];
-}
-
-interface PDFParserError {
-  parserError?: string;
-}
-
-// Type declaration for pdf2json module
-declare const require: (module: string) => {
-  new (a: null, b: boolean): {
-    on(event: "pdfParser_dataError", callback: (errData: PDFParserError | string) => void): void;
-    on(event: "pdfParser_dataReady", callback: (pdfData: PDFData) => void): void;
-    parseBuffer: (buffer: Buffer) => void;
-  };
-};
-
-export async function parsePdf(
-    bufferOrUint8: ArrayBuffer | Uint8Array
-  ): Promise<{ text: string }> {
-    const PDFParser = require("pdf2json");
-
-    return new Promise((resolve, reject) => {
-      // ✅ FIX: second argument should be a boolean, not a number
-      const pdfParser = new PDFParser(null, true);
-
-      pdfParser.on("pdfParser_dataError", (errData: PDFParserError | string) => {
-        // ✅ Fix type safety for parserError
-        const errorMsg =
-          errData && typeof errData === "object" && "parserError" in errData
-            ? errData.parserError
-            : errData;
-        console.error("PDF Parser Error:", errorMsg);
-        reject(errorMsg);
-      });
-
-      pdfParser.on("pdfParser_dataReady", (pdfData: PDFData) => {
-        try {
-          let text = "";
-
-          if (pdfData && pdfData.Pages) {
-            pdfData.Pages.forEach((page: PDFPage) => {
-              if (page.Texts) {
-                page.Texts.forEach((textItem: PDFTextItem) => {
-                  if (textItem.R) {
-                    textItem.R.forEach((run: PDFTextRun) => {
-                      if (run.T) {
-                        // ✅ Decode URI-encoded text correctly
-                        text += decodeURIComponent(run.T) + " ";
-                      }
-                    });
-                  }
-                });
-                text += "\n";
-              }
-            });
-          }
-
-          resolve({ text: text.trim() });
-        } catch (error) {
-          console.error("Error processing PDF data:", error);
-          reject(error);
-        }
-      });
-  
-      const buffer =
-        bufferOrUint8 instanceof Uint8Array
-          ? Buffer.from(bufferOrUint8)
-          : Buffer.from(new Uint8Array(bufferOrUint8));
-  
-      pdfParser.parseBuffer(buffer);
-    });
+export async function parsePdfPages(bufferOrUint8: ArrayBuffer | Uint8Array | Buffer): Promise<ParsedPdf> {
+  const { PDFParse } = await import("pdf-parse");
+  const data =
+    bufferOrUint8 instanceof Uint8Array ? new Uint8Array(bufferOrUint8) : new Uint8Array(bufferOrUint8);
+  const parser = new PDFParse({ data });
+  try {
+    const result = await parser.getText();
+    const raw = result.pages.map((p: { text: string }) => p.text ?? "");
+    return { pages: cleanPages(raw) };
+  } finally {
+    await (parser as unknown as { destroy?: () => Promise<void> }).destroy?.();
   }
-  
+}
+
+/**
+ * Normalises page text:
+ *  - joins words hyphenated across a line break ("anal-\nysis" -> "analysis")
+ *  - removes running headers/footers (lines repeated at the top/bottom of many pages,
+ *    ignoring digits so "Page 7" and "Page 8" match)
+ *  - collapses whitespace
+ */
+export function cleanPages(rawPages: string[]): string[] {
+  const linesPerPage = rawPages.map((t) =>
+    t
+      .replace(/(\p{Ll})-\n(\p{Ll})/gu, "$1$2")
+      .split(/\n/)
+      .map((l) => l.trim())
+      .filter(Boolean)
+  );
+
+  const EDGE = 4; // lines at the top and bottom of a page considered for header/footer detection
+  const key = (l: string) => l.replace(/\d+/g, "#").toLowerCase();
+  const counts = new Map<string, number>();
+  for (const lines of linesPerPage) {
+    const edge = new Set([...lines.slice(0, EDGE), ...lines.slice(-EDGE)].map(key));
+    for (const k of edge) counts.set(k, (counts.get(k) ?? 0) + 1);
+  }
+  const minRepeats = Math.max(3, Math.ceil(rawPages.length * 0.4));
+  const boilerplate = new Set([...counts].filter(([, c]) => c >= minRepeats).map(([k]) => k));
+
+  return linesPerPage.map((lines) => {
+    const kept = lines.filter((l, i) => {
+      const atEdge = i < EDGE || i >= lines.length - EDGE;
+      return !(atEdge && boilerplate.has(key(l)));
+    });
+    return kept.join(" ").replace(/\s+/g, " ").trim();
+  });
+}
