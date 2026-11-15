@@ -1,6 +1,5 @@
-# BeyondChats Assignment — AI-Powered Learning Assistant([Live App](https://virtual-document-assistant-fkj9.vercel.app/))([Demo Video](https://drive.google.com/file/d/1JWB3EN4FlL6XKZiTanmKvzipE2UXHdNI/view?usp=drive_link))
+# AI-Powered Learning Assistant([Live App](https://virtual-document-assistant-fkj9.vercel.app/))
 
-### Built by Om Bhandwaldar
 
 ---
 
@@ -9,7 +8,7 @@
 This project is an AI-powered Learning Assistant that enables students to upload, view, and interact with their study materials.
 It supports PDF ingestion, quiz generation, progress tracking, and Retrieval-Augmented Generation (RAG) based intelligent Q&A.
 
-Students/Users can upload course PDFs (like NCERT Physics books), generate quizzes, attempt them, track performance, and even chat with an AI tutor - all in one modern interface.
+Users can upload PDFs, generate quizzes, attempt them, track performance, and even chat with an AI tutor - all in one modern interface.
 
 ---
 
@@ -294,31 +293,5 @@ Each quiz submission is stored as a QuizAttempt:
 | Manual chunking trigger    | Easier control for debugging                     |
 | Vector size 1536           | Compatible with Gemini embeddings                |
 
----
 
-## Future Enhancements
-
-* One-click flowchart generation
-* Export quiz results to PDF
-* Multi-user authentication
-* YouTube video recommender from YouTube API
-
-
----
-
-## Development Summary
-
-* Duration: 3 Days
-* Approach: Step-by-step development of RAG → PDF handling → quiz generation → scoring.
-* Tools Used: ChatGPT, Supabase SQL Editor, Prisma Studio, Gemini API, Vercel.
-* Tested using NCERT Class XI Physics PDFs.
-
----
-
-## Author
-
-**Om Bhandwaldar**
-Full Stack Web Developer | Next.js | Node.js | PostgreSQL | DevOps | AWS
-Email: [ombhandwaldar@example.com](mailto:bhandwaldarom15@gmail.com)
-LinkedIn: [linkedin.com/in/ombhandwaldar](https://linkedin.com/in/ombhandwaldar)
 
