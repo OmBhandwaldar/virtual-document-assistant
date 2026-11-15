@@ -12,7 +12,7 @@ import { chunkPages, type ChunkingConfig } from "@/lib/chunker";
 import { embedTexts, EMBEDDING_DIM, EMBEDDING_MODEL, DOCUMENT_TASK_TYPE, type EmbedOptions } from "@/lib/gemini";
 
 /** Default chunking. Chosen by MRR on the eval set; see README "Retrieval Quality". */
-export const DEFAULT_CHUNKING: ChunkingConfig = { targetWords: 350, overlapWords: 50 };
+export const DEFAULT_CHUNKING: ChunkingConfig = { targetWords: 500, overlapWords: 75 };
 
 export const INGEST_CONFIG = {
   parser: "pdf-parse (pdf.js), per page, running headers/footers removed",
