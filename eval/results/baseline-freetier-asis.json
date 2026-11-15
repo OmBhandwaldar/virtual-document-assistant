@@ -1,0 +1,1749 @@
+{
+  "label": "baseline (free-tier key, as-is: failed embedding batches silently skipped)",
+  "createdAt": "2026-11-15T09:02:06.340Z",
+  "gitCommit": "b993945",
+  "gitDirty": true,
+  "pipeline": {
+    "ingestPath": "app/api/upload/route.ts POST (inline pipeline)",
+    "parser": "pdf2json (lib/pdfParser.ts), whitespace collapsed to single spaces, page boundaries discarded",
+    "chunking": {
+      "method": "fixed-size character windows (lib/chunker.ts chunkText)",
+      "unit": "characters",
+      "size": 400,
+      "overlap": 80,
+      "pageAssignment": "page = chunk index + 1 (not a real page number)"
+    },
+    "embedding": {
+      "model": "gemini-embedding-001",
+      "dimension": 1536,
+      "documentTaskType": null,
+      "queryTaskType": null,
+      "dimensionObservedInDb": 1536
+    }
+  },
+  "retrieval": {
+    "rpc": "match_embeddings",
+    "topK": 5,
+    "filter": "question's own PDF",
+    "index": "ivfflat (lists=100), default probes"
+  },
+  "questionsFile": "eval/questions.json",
+  "corpus": {
+    "NIST.CSWP.29.pdf": {
+      "pdfId": "db527d4c-eea5-4614-bfd9-be8ddb587b5f",
+      "pages": 32,
+      "chunks": 217,
+      "embeddings": 100,
+      "embeddingsLinkedToChunk": 0
+    },
+    "nist.sp.800-63b.pdf": {
+      "pdfId": "10183c62-8567-4171-bfc7-1453870787ff",
+      "pages": 80,
+      "chunks": 631,
+      "embeddings": 0,
+      "embeddingsLinkedToChunk": 0
+    },
+    "thinkstats2.pdf": {
+      "pdfId": "27ddd911-f3ed-4aa5-9c13-7251c3e6d355",
+      "pages": 264,
+      "chunks": 960,
+      "embeddings": 0,
+      "embeddingsLinkedToChunk": 0
+    }
+  },
+  "metrics": {
+    "overall": {
+      "questions": 50,
+      "recallAt1": 0,
+      "recallAt5": 0,
+      "mrrAt5": 0,
+      "recallAt1_truePage": 0.14,
+      "recallAt5_truePage": 0.22,
+      "mrrAt5_truePage": 0.166,
+      "citations": 80,
+      "citationsLocated": 80,
+      "citationAccuracy": 0.013,
+      "avgResultsReturned": 1.6,
+      "queriesWithFewerThanTopK": 34
+    },
+    "byPdf": {
+      "NIST.CSWP.29.pdf": {
+        "questions": 16,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0.438,
+        "recallAt5_truePage": 0.688,
+        "mrrAt5_truePage": 0.518,
+        "citations": 80,
+        "citationsLocated": 80,
+        "citationAccuracy": 0.013,
+        "avgResultsReturned": 5,
+        "queriesWithFewerThanTopK": 0
+      },
+      "nist.sp.800-63b.pdf": {
+        "questions": 17,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0,
+        "recallAt5_truePage": 0,
+        "mrrAt5_truePage": 0,
+        "citations": 0,
+        "citationsLocated": 0,
+        "citationAccuracy": null,
+        "avgResultsReturned": 0,
+        "queriesWithFewerThanTopK": 17
+      },
+      "thinkstats2.pdf": {
+        "questions": 17,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0,
+        "recallAt5_truePage": 0,
+        "mrrAt5_truePage": 0,
+        "citations": 0,
+        "citationsLocated": 0,
+        "citationAccuracy": null,
+        "avgResultsReturned": 0,
+        "queriesWithFewerThanTopK": 17
+      }
+    },
+    "byType": {
+      "concept": {
+        "questions": 18,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0.167,
+        "recallAt5_truePage": 0.222,
+        "mrrAt5_truePage": 0.178,
+        "citations": 30,
+        "citationsLocated": 30,
+        "citationAccuracy": 0,
+        "avgResultsReturned": 1.667,
+        "queriesWithFewerThanTopK": 12
+      },
+      "factual": {
+        "questions": 26,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0.115,
+        "recallAt5_truePage": 0.192,
+        "mrrAt5_truePage": 0.138,
+        "citations": 40,
+        "citationsLocated": 40,
+        "citationAccuracy": 0.025,
+        "avgResultsReturned": 1.538,
+        "queriesWithFewerThanTopK": 18
+      },
+      "definition": {
+        "questions": 6,
+        "recallAt1": 0,
+        "recallAt5": 0,
+        "mrrAt5": 0,
+        "recallAt1_truePage": 0.167,
+        "recallAt5_truePage": 0.333,
+        "mrrAt5_truePage": 0.25,
+        "citations": 10,
+        "citationsLocated": 10,
+        "citationAccuracy": 0,
+        "avgResultsReturned": 1.667,
+        "queriesWithFewerThanTopK": 4
+      }
+    }
+  },
+  "perQuestion": [
+    {
+      "id": "csf-01",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        9
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 57,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.6149,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ncidents in the R ESPOND and R ECOVER Functions. G OVERN is in the center of the wheel because it informs how an organiz"
+        },
+        {
+          "rank": 2,
+          "storedPage": 44,
+          "truePages": [
+            8
+          ],
+          "similarity": 0.5938,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " 1 . These outcomes are not a checklist of actions to perform ; specific actions taken to achieve a n outcome will vary "
+        },
+        {
+          "rank": 3,
+          "storedPage": 55,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.5928,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "re restored . R ECOVER supports the timely restoration of normal operations to reduce the effects of cybersecurity incid"
+        },
+        {
+          "rank": 4,
+          "storedPage": 56,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.5922,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "tegorize assets under I DENTIFY an d take steps to secure those assets under P ROTECT . I nvestments in planning and tes"
+        },
+        {
+          "rank": 5,
+          "storedPage": 14,
+          "truePages": [
+            4
+          ],
+          "similarity": 0.5868,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "...... 26 List of Figures Fig. 1. CSF Core structure ..................................................................."
+        }
+      ]
+    },
+    {
+      "id": "csf-02",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        10
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 60,
+          "truePages": [
+            10
+          ],
+          "similarity": 0.6324,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "ntinuously, and actions that support R ESPOND and R ECOVER should be ready at all times and happen when cybersecurity in"
+        },
+        {
+          "rank": 2,
+          "storedPage": 53,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.5971,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " . D ETECT enables the timely discovery and analysis of anomalies, indicators of compromise, and other potentially adver"
+        },
+        {
+          "rank": 3,
+          "storedPage": 61,
+          "truePages": [
+            10
+          ],
+          "similarity": 0.5799,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "D , and R ECOVER outcomes help discover and manage incidents. Each Function is named after a verb that summarizes its co"
+        },
+        {
+          "rank": 4,
+          "storedPage": 55,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.577,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "re restored . R ECOVER supports the timely restoration of normal operations to reduce the effects of cybersecurity incid"
+        },
+        {
+          "rank": 5,
+          "storedPage": 54,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.5719,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "g a detected cybersecurity inciden t are taken . R ESPOND supports the ability to contain the effects of cybersecurity i"
+        }
+      ]
+    },
+    {
+      "id": "csf-03",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        10
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 4,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 39,
+          "truePages": [
+            7
+          ],
+          "similarity": 0.6874,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "i zations both inside and outside of the United States. The CSF should be used in conjunction with other resources (e.g."
+        },
+        {
+          "rank": 2,
+          "storedPage": 19,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6667,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "isks alongside other risks of the enterprise, including those that are financial, privacy, supply chain, reputational, t"
+        },
+        {
+          "rank": 3,
+          "storedPage": 17,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6643,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " help organizations of all sizes and sectors — including industry, government, academia, and nonprofit — to manage and r"
+        },
+        {
+          "rank": 4,
+          "storedPage": 62,
+          "truePages": [
+            10
+          ],
+          "similarity": 0.655,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "comes of technical and management activities. The Subcategories are not exhaustive, but they describe detailed outcomes "
+        },
+        {
+          "rank": 5,
+          "storedPage": 63,
+          "truePages": [
+            10,
+            11
+          ],
+          "similarity": 0.6541,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "al technology (OT). They also appl y to all types of technology environments, including cloud, mobile, and artificial in"
+        }
+      ]
+    },
+    {
+      "id": "csf-04",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "definition",
+      "relevantPages": [
+        11
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 66,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.7462,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "Profile includes one or both of the following : 1. A Cur rent Profile specifies the Core outcomes that an organization i"
+        },
+        {
+          "rank": 2,
+          "storedPage": 65,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.7113,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "sess, prioritize, and communicate the Core ’s outcomes by considering an organization’s mission objectives, stakeholder "
+        },
+        {
+          "rank": 3,
+          "storedPage": 67,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.6949,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "lected and prioritized for achieving its cybersecurity risk manageme nt objectives. A Target Profile considers anticipat"
+        },
+        {
+          "rank": 4,
+          "storedPage": 74,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6858,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "gaps between the Current and Target Profiles , and create an action plan. Conduct a gap analysis to i dentify and analyz"
+        },
+        {
+          "rank": 5,
+          "storedPage": 25,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6832,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "h are available online and updated regularly. Creating current and target state O rganizational Profiles helps organizat"
+        }
+      ]
+    },
+    {
+      "id": "csf-05",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "definition",
+      "relevantPages": [
+        11
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 2,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 86,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.6413,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rmative References can be sector - or technology - specific. They may be produced by NIST or another organization. S ome"
+        },
+        {
+          "rank": 2,
+          "storedPage": 68,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.6408,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "eated and published to address shared intere sts and goals among a number of organizations . A Community Profile is typi"
+        },
+        {
+          "rank": 3,
+          "storedPage": 33,
+          "truePages": [
+            6
+          ],
+          "similarity": 0.6203,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "e the CSF. They include: • Informative References that point to sources of guidance on each outcome from existing global"
+        },
+        {
+          "rank": 4,
+          "storedPage": 85,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.6184,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": ": Informative References, Implementation Examples, and Quick Start Guides . Informative Ref erences are mappings that in"
+        },
+        {
+          "rank": 5,
+          "storedPage": 6,
+          "truePages": [
+            2
+          ],
+          "similarity": 0.6145,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "e useful to those making and influencing policy ( e.g., associations, professional organizations, regulators) who set an"
+        }
+      ]
+    },
+    {
+      "id": "csf-06",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        12
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 74,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.728,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "gaps between the Current and Target Profiles , and create an action plan. Conduct a gap analysis to i dentify and analyz"
+        },
+        {
+          "rank": 2,
+          "storedPage": 99,
+          "truePages": [
+            16
+          ],
+          "similarity": 0.682,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rganizational priorities, resources, and risk direction from executives . Managers then collaborate with practitioners t"
+        },
+        {
+          "rank": 3,
+          "storedPage": 73,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6691,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "at types of information the Profile should include for the selected CSF outcomes, and document the needed information. C"
+        },
+        {
+          "rank": 4,
+          "storedPage": 75,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6616,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "aps. 5. Implement the action plan , and update the Organizational Profile. F ollow the action plan to address the gaps a"
+        },
+        {
+          "rank": 5,
+          "storedPage": 65,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.6442,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "sess, prioritize, and communicate the Core ’s outcomes by considering an organization’s mission objectives, stakeholder "
+        }
+      ]
+    },
+    {
+      "id": "csf-07",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        12
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 71,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.7091,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "a Profile could address an entire organization or be scoped to an organization’s financial systems or to count ering ran"
+        },
+        {
+          "rank": 2,
+          "storedPage": 70,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6841,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 7 1. Scope the Organizational Profile. D ocument the high "
+        },
+        {
+          "rank": 3,
+          "storedPage": 76,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6623,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": " often as needed. There are additional uses for Organizational Profiles. For example, a Current Prof ile can be used to "
+        },
+        {
+          "rank": 4,
+          "storedPage": 65,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.661,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "sess, prioritize, and communicate the Core ’s outcomes by considering an organization’s mission objectives, stakeholder "
+        },
+        {
+          "rank": 5,
+          "storedPage": 67,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.6583,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "lected and prioritized for achieving its cybersecurity risk manageme nt objectives. A Target Profile considers anticipat"
+        }
+      ]
+    },
+    {
+      "id": "csf-08",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        13
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 81,
+          "truePages": [
+            13
+          ],
+          "similarity": 0.7084,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "le, an organization can use the Tiers to communicate internally as a benchmark for a n organization - wide 1 1 For the p"
+        },
+        {
+          "rank": 2,
+          "storedPage": 40,
+          "truePages": [
+            7
+          ],
+          "similarity": 0.6775,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "se level. The CSF is a flexible framework that is intended to be tailored for use by all organizations regardless of siz"
+        },
+        {
+          "rank": 3,
+          "storedPage": 78,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6561,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rize the rigor of an organization’s cybersecurity risk governance and management practices , and they provide context fo"
+        },
+        {
+          "rank": 4,
+          "storedPage": 80,
+          "truePages": [
+            13
+          ],
+          "similarity": 0.6491,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "4 8 continuously improving . Selecting Tiers helps set the overall tone for how an organization will manage its cybersec"
+        },
+        {
+          "rank": 5,
+          "storedPage": 79,
+          "truePages": [
+            12,
+            13
+          ],
+          "similarity": 0.6473,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "actices for managing cybersecurity risk as Partial (Tier 1), Risk Informed (Tier 2), Repeatable (Tier 3), and Adaptive ("
+        }
+      ]
+    },
+    {
+      "id": "csf-09",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        14
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 1,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 88,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.6584,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "mplementation Examples provide notional examples of concise, action - oriented steps to help achieve the outcomes of the"
+        },
+        {
+          "rank": 2,
+          "storedPage": 44,
+          "truePages": [
+            8
+          ],
+          "similarity": 0.6304,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " 1 . These outcomes are not a checklist of actions to perform ; specific actions taken to achieve a n outcome will vary "
+        },
+        {
+          "rank": 3,
+          "storedPage": 89,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.6135,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "could be taken by an organization to achieve an outcome, nor do they re present a baseline of required actions to addres"
+        },
+        {
+          "rank": 4,
+          "storedPage": 75,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.5911,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "aps. 5. Implement the action plan , and update the Organizational Profile. F ollow the action plan to address the gaps a"
+        },
+        {
+          "rank": 5,
+          "storedPage": 61,
+          "truePages": [
+            10
+          ],
+          "similarity": 0.588,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "D , and R ECOVER outcomes help discover and manage incidents. Each Function is named after a verb that summarizes its co"
+        }
+      ]
+    },
+    {
+      "id": "csf-10",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        14
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 5,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 7,
+          "truePages": [
+            2
+          ],
+          "similarity": 0.6573,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "t Guides and Community Profiles. All resources are made publicly available on the NIST CSF website . Suggestions for add"
+        },
+        {
+          "rank": 2,
+          "storedPage": 22,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6415,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "t Guides (QSGs) . Also, various tools offer downloadable formats to help organizations that choose to automate some of t"
+        },
+        {
+          "rank": 3,
+          "storedPage": 6,
+          "truePages": [
+            2
+          ],
+          "similarity": 0.6385,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "e useful to those making and influencing policy ( e.g., associations, professional organizations, regulators) who set an"
+        },
+        {
+          "rank": 4,
+          "storedPage": 32,
+          "truePages": [
+            6
+          ],
+          "similarity": 0.6363,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " can achieve those outcomes are provided in a suite of online resources that complement the CSF and are available throug"
+        },
+        {
+          "rank": 5,
+          "storedPage": 90,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.6355,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "because they distill specific portions of the CSF into actionable “ first steps ” that an organization can consider on t"
+        }
+      ]
+    },
+    {
+      "id": "csf-11",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        15
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": 3,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 58,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.668,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "tive opportunities . Actions to reduce cybersecurity risk might benefit an organization in other ways, like increasing r"
+        },
+        {
+          "rank": 2,
+          "storedPage": 57,
+          "truePages": [
+            9
+          ],
+          "similarity": 0.6524,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ncidents in the R ESPOND and R ECOVER Functions. G OVERN is in the center of the wheel because it informs how an organiz"
+        },
+        {
+          "rank": 3,
+          "storedPage": 93,
+          "truePages": [
+            15
+          ],
+          "similarity": 0.6435,
+          "hitStored": false,
+          "hitTrue": true,
+          "citationCorrect": false,
+          "preview": "s about cybersecurity expenditures and actions . An o rganization may choose to handle risk in one or more ways — includ"
+        },
+        {
+          "rank": 4,
+          "storedPage": 18,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6094,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " size - fits - all approach. Each organization has both common and unique risks , as well as varying risk appetites and "
+        },
+        {
+          "rank": 5,
+          "storedPage": 76,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6028,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " often as needed. There are additional uses for Organizational Profiles. For example, a Current Prof ile can be used to "
+        }
+      ]
+    },
+    {
+      "id": "csf-12",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        18
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 16,
+          "truePages": [
+            4,
+            5
+          ],
+          "similarity": 0.6349,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "............................................ 10 F ig. 6. Cybersecurity and privacy risk relationship ..................."
+        },
+        {
+          "rank": 2,
+          "storedPage": 19,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6259,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "isks alongside other risks of the enterprise, including those that are financial, privacy, supply chain, reputational, t"
+        },
+        {
+          "rank": 3,
+          "storedPage": 68,
+          "truePages": [
+            11
+          ],
+          "similarity": 0.6013,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "eated and published to address shared intere sts and goals among a number of organizations . A Community Profile is typi"
+        },
+        {
+          "rank": 4,
+          "storedPage": 86,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.5997,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rmative References can be sector - or technology - specific. They may be produced by NIST or another organization. S ome"
+        },
+        {
+          "rank": 5,
+          "storedPage": 82,
+          "truePages": [
+            13
+          ],
+          "similarity": 0.5978,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "r mandates are greater or when a cost - benefit analysis indicates a feasible and cost - effective reduction of negative"
+        }
+      ]
+    },
+    {
+      "id": "csf-13",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        19
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 23,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.632,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "se supplementary resources from NIST and others should be viewed as a “CSF portfolio” to help manage and reduce risks. R"
+        },
+        {
+          "rank": 2,
+          "storedPage": 86,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.616,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rmative References can be sector - or technology - specific. They may be produced by NIST or another organization. S ome"
+        },
+        {
+          "rank": 3,
+          "storedPage": 48,
+          "truePages": [
+            8
+          ],
+          "similarity": 0.6116,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " cybersecurity supply chain risk management; roles, responsibilities, and authorities; polic y; and the oversight of cyb"
+        },
+        {
+          "rank": 4,
+          "storedPage": 77,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6076,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "Target Profile can help express the organization’s cybersecurity risk management requirements and expectations to suppli"
+        },
+        {
+          "rank": 5,
+          "storedPage": 47,
+          "truePages": [
+            8
+          ],
+          "similarity": 0.6063,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ctions in the context of its mission and stakeholder expectations . Governance activities are critical for incorporating"
+        }
+      ]
+    },
+    {
+      "id": "csf-14",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        19
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 94,
+          "truePages": [
+            15
+          ],
+          "similarity": 0.6869,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": ", an organization can use the CSF b oth internally to manage its cybersecurity capabilities and externally to oversee or"
+        },
+        {
+          "rank": 2,
+          "storedPage": 2,
+          "truePages": [
+            2
+          ],
+          "similarity": 0.6754,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": true,
+          "preview": "CSF) 2.0 provides guidance to industry, government agencies, and other organizations to manage cybersecurity risks . It "
+        },
+        {
+          "rank": 3,
+          "storedPage": 28,
+          "truePages": [
+            6
+          ],
+          "similarity": 0.672,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ore , the nucleus of the CSF, which is a taxonomy of high - level cybersecurity outcomes that can help any organization "
+        },
+        {
+          "rank": 4,
+          "storedPage": 43,
+          "truePages": [
+            7,
+            8
+          ],
+          "similarity": 0.6708,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "on of the CSF Tiers. • Appendix C is a glossary of CSF terminology. NIST CSWP 29 The NIST Cybersecurity Framework (CSF) "
+        },
+        {
+          "rank": 5,
+          "storedPage": 32,
+          "truePages": [
+            6
+          ],
+          "similarity": 0.6707,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " can achieve those outcomes are provided in a suite of online resources that complement the CSF and are available throug"
+        }
+      ]
+    },
+    {
+      "id": "csf-15",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "factual",
+      "relevantPages": [
+        20
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 44,
+          "truePages": [
+            8
+          ],
+          "similarity": 0.6553,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " 1 . These outcomes are not a checklist of actions to perform ; specific actions taken to achieve a n outcome will vary "
+        },
+        {
+          "rank": 2,
+          "storedPage": 61,
+          "truePages": [
+            10
+          ],
+          "similarity": 0.5895,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "D , and R ECOVER outcomes help discover and manage incidents. Each Function is named after a verb that summarizes its co"
+        },
+        {
+          "rank": 3,
+          "storedPage": 31,
+          "truePages": [
+            6
+          ],
+          "similarity": 0.5821,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "ces . Tiers can also provide context for how an organization views cybersecurity risks and the processes in place to man"
+        },
+        {
+          "rank": 4,
+          "storedPage": 87,
+          "truePages": [
+            14
+          ],
+          "similarity": 0.5786,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "e one of many references needed to achieve the outcome described in one Subcategory. Other Informative References may be"
+        },
+        {
+          "rank": 5,
+          "storedPage": 94,
+          "truePages": [
+            15
+          ],
+          "similarity": 0.5748,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": ", an organization can use the CSF b oth internally to manage its cybersecurity capabilities and externally to oversee or"
+        }
+      ]
+    },
+    {
+      "id": "csf-16",
+      "pdfFile": "NIST.CSWP.29.pdf",
+      "type": "concept",
+      "relevantPages": [
+        30
+      ],
+      "returned": 5,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": [
+        {
+          "rank": 1,
+          "storedPage": 78,
+          "truePages": [
+            12
+          ],
+          "similarity": 0.6874,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "rize the rigor of an organization’s cybersecurity risk governance and management practices , and they provide context fo"
+        },
+        {
+          "rank": 2,
+          "storedPage": 93,
+          "truePages": [
+            15
+          ],
+          "similarity": 0.6751,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "s about cybersecurity expenditures and actions . An o rganization may choose to handle risk in one or more ways — includ"
+        },
+        {
+          "rank": 3,
+          "storedPage": 19,
+          "truePages": [
+            5
+          ],
+          "similarity": 0.6706,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "isks alongside other risks of the enterprise, including those that are financial, privacy, supply chain, reputational, t"
+        },
+        {
+          "rank": 4,
+          "storedPage": 92,
+          "truePages": [
+            15
+          ],
+          "similarity": 0.6701,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": " Cybersecurity Risk Communication and Integration The CSF ’s use will vary based on an organization’s unique mission and"
+        },
+        {
+          "rank": 5,
+          "storedPage": 97,
+          "truePages": [
+            15
+          ],
+          "similarity": 0.6685,
+          "hitStored": false,
+          "hitTrue": false,
+          "citationCorrect": false,
+          "preview": "who manage specific cybersecurity risks that could affect the achievement of those priorities . The CSF also supports a "
+        }
+      ]
+    },
+    {
+      "id": "dig-01",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        16
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-02",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        19,
+        22
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-03",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        21,
+        22
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-04",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        18,
+        22
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-05",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "concept",
+      "relevantPages": [
+        18
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-06",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        20,
+        22
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-07",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        24
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-08",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        24
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-09",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        25,
+        79
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-10",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        26
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-11",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        29
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-12",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "concept",
+      "relevantPages": [
+        30
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-13",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "concept",
+      "relevantPages": [
+        25
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-14",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        38
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-15",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        48
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-16",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "factual",
+      "relevantPages": [
+        50
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "dig-17",
+      "pdfFile": "nist.sp.800-63b.pdf",
+      "type": "concept",
+      "relevantPages": [
+        40
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-01",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        22
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-02",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "factual",
+      "relevantPages": [
+        47
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-03",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "definition",
+      "relevantPages": [
+        47
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-04",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "factual",
+      "relevantPages": [
+        57
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-05",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "factual",
+      "relevantPages": [
+        67
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-06",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "definition",
+      "relevantPages": [
+        77,
+        93
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-07",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        106
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-08",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        121
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-09",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        122
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-10",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "factual",
+      "relevantPages": [
+        126
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-11",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "definition",
+      "relevantPages": [
+        131,
+        136
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-12",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        141
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-13",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "definition",
+      "relevantPages": [
+        151,
+        155
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-14",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        165
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-15",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        185
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-16",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "factual",
+      "relevantPages": [
+        219
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    },
+    {
+      "id": "ts-17",
+      "pdfFile": "thinkstats2.pdf",
+      "type": "concept",
+      "relevantPages": [
+        242,
+        243
+      ],
+      "returned": 0,
+      "firstHitRankStored": null,
+      "firstHitRankTrue": null,
+      "results": []
+    }
+  ]
+}
