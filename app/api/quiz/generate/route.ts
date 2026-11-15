@@ -1,5 +1,6 @@
 // app/api/quiz/generate/route.ts
 import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 import { Prisma } from "@/lib/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { buildQuizPrompt, safeJsonParse } from "@/lib/prompt";
@@ -78,6 +79,7 @@ export async function POST(req: Request) {
     // 5️⃣ Prepare Questions for DB insertion
     const questionRows = [
       ...(parsed.mcq ?? []).map((m) => ({
+        id: randomUUID(),
         quizId: quiz.id,
         type: "MCQ",
         text: m.question,
@@ -88,6 +90,7 @@ export async function POST(req: Request) {
         explanation: m.explanation ?? "",
       })),
       ...(parsed.saq ?? []).map((s) => ({
+        id: randomUUID(),
         quizId: quiz.id,
         type: "SAQ",
         text: s.question,
@@ -98,6 +101,7 @@ export async function POST(req: Request) {
         explanation: s.explanation ?? "",
       })),
       ...(parsed.laq ?? []).map((l) => ({
+        id: randomUUID(),
         quizId: quiz.id,
         type: "LAQ",
         text: l.question,
@@ -115,8 +119,8 @@ export async function POST(req: Request) {
     await prisma.question.createMany({ data: questionRows });
 
     // 6️⃣ Send questions to UI
-    const uiQuestions = questionRows.map((q, i) => ({
-      id: `q_${i}`,
+    const uiQuestions = questionRows.map((q) => ({
+      id: q.id, // must be the DB id: /api/quiz/submit scores answers by question id
       type: q.type as "MCQ" | "SAQ" | "LAQ",
       question: q.text,
       options: q.options ?? undefined,
