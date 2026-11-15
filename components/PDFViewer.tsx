@@ -1,182 +1,169 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { ChevronLeft, ChevronRight, FileText, Minus, PanelRightClose, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ZoomIn,
-  ZoomOut,
-  FileText,
-} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-// Import CSS files for react-pdf
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-
-// Dynamically import react-pdf components to avoid SSR issues
-const Document = dynamic(
-  () => import("react-pdf").then((mod) => mod.Document),
-  { ssr: false }
-);
-
-const Page = dynamic(
-  () => import("react-pdf").then((mod) => mod.Page),
-  { ssr: false }
-);
+const Document = dynamic(() => import("react-pdf").then((m) => m.Document), { ssr: false });
+const Page = dynamic(() => import("react-pdf").then((m) => m.Page), { ssr: false });
 
 interface PDFViewerProps {
-  file?: File | null;           // optional local File
-  fileUrl?: string | null;      // optional remote/signed URL
-  pdfName?: string;             // display name
-  initialPage?: number;         // optional starting page
+  fileUrl: string | null;
+  title?: string;
+  /** Page to show; changing `jumpKey` re-applies it even if the page number is the same. */
+  page?: number;
+  jumpKey?: number;
+  onClose?: () => void;
 }
 
-export default function PDFViewer({
-  file = null,
-  fileUrl = null,
-  pdfName,
-  initialPage = 1,
-}: PDFViewerProps) {
-  const [numPages, setNumPages] = useState<number>(0);
-  const [pageNumber, setPageNumber] = useState<number>(initialPage);
-  const [scale, setScale] = useState<number>(1.0);
-  const [error, setError] = useState<string>("");
+export default function PDFViewer({ fileUrl, title, page = 1, jumpKey = 0, onClose }: PDFViewerProps) {
+  const [numPages, setNumPages] = useState(0);
+  const [pageNumber, setPageNumber] = useState(page);
+  const [pageInput, setPageInput] = useState(String(page));
+  const [zoom, setZoom] = useState(1);
+  const [error, setError] = useState("");
+  const [flash, setFlash] = useState(0);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
 
-  // Set up PDF.js worker client-side only
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      // Import react-pdf and set up worker
-      import("react-pdf").then((mod) => {
-        mod.pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${mod.pdfjs.version}/build/pdf.worker.min.mjs`;
-      });
-    }
+    import("react-pdf").then((mod) => {
+      mod.pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${mod.pdfjs.version}/build/pdf.worker.min.mjs`;
+    });
   }, []);
 
-  // Prefer File if provided, else fall back to URL
-  const src: File | string | null = file ? file : fileUrl ? fileUrl : null;
+  // Fit page to the panel width.
+  useEffect(() => {
+    const el = canvasRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => setWidth(Math.floor(entry.contentRect.width)));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [fileUrl]);
 
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-    setNumPages(numPages);
-    // reset to 1 (or provided initialPage bounded to numPages)
-    setPageNumber(Math.min(Math.max(initialPage, 1), numPages));
+  // External jump (e.g. a citation chip was clicked).
+  useEffect(() => {
+    const target = numPages ? clamp(page, 1, numPages) : page;
+    setPageNumber(target);
+    setPageInput(String(target));
+    if (jumpKey > 0) setFlash((f) => f + 1);
+    canvasRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page, jumpKey, numPages]);
+
+  useEffect(() => {
+    setNumPages(0);
     setError("");
-  }
+  }, [fileUrl]);
 
-  function onDocumentLoadError(err: Error) {
-    setError(err.message || "Failed to load PDF.");
-  }
+  const go = (p: number) => {
+    const target = clamp(p, 1, numPages || 1);
+    setPageNumber(target);
+    setPageInput(String(target));
+  };
 
-  const goToPrevPage = () => setPageNumber((prev) => Math.max(1, prev - 1));
-  const goToNextPage = () => setPageNumber((prev) => Math.min(numPages, prev + 1));
-  const zoomIn = () => setScale((prev) => Math.min(2.0, prev + 0.2));
-  const zoomOut = () => setScale((prev) => Math.max(0.5, prev - 0.2));
-
-  if (!src) {
+  if (!fileUrl) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-gray-50 to-gray-100 p-8">
-        <div className="w-24 h-24 bg-gradient-to-br from-purple-200 to-blue-200 rounded-3xl flex items-center justify-center mb-6 shadow-lg">
-          <FileText className="h-12 w-12 text-purple-600" />
+      <div className="flex h-full flex-col items-center justify-center bg-sunken px-10 text-center">
+        <div className="grid size-12 place-items-center rounded-xl border border-border bg-card shadow-[var(--shadow-sm)]">
+          <FileText className="size-5 text-muted-foreground" strokeWidth={1.5} />
         </div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">
-          No PDF Selected
-        </h3>
-        <p className="text-gray-600 text-center max-w-md">
-          Upload and select a PDF from the sidebar to view it here. You can zoom,
-          scroll, and switch pages easily.
+        <p className="mt-5 font-serif text-[20px]">No page open</p>
+        <p className="mt-2 max-w-[18rem] text-[13.5px] leading-relaxed text-muted-foreground">
+          Select a document in the sidebar, or click a page reference in an answer to open it here.
         </p>
       </div>
     );
   }
 
+  const pageWidth = width ? Math.max(240, (width - 48) * zoom) : undefined;
+
   return (
-    <div className="flex flex-col h-full bg-gray-100">
+    <div className="flex h-full min-h-0 flex-col bg-sunken">
       {/* Toolbar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-sm flex-shrink-0">
-        <div className="flex items-center space-x-2">
-          <FileText className="h-5 w-5 text-purple-600" />
-          <h3 className="text-sm font-medium text-gray-900 truncate max-w-[240px]">
-            {pdfName || (file instanceof File ? file.name : "Document")}
-          </h3>
+      <div className="flex h-14 shrink-0 items-center justify-between gap-2 overflow-hidden border-b border-border bg-background/60 px-3">
+        <div className="flex min-w-0 flex-1 items-center gap-2 pl-1">
+          <FileText className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+          <span className="truncate text-[13px] font-medium" title={title}>
+            {title ?? "Document"}
+          </span>
         </div>
 
-        <div className="flex items-center space-x-2">
-          {/* Zoom Controls */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={zoomOut}
-            disabled={scale <= 0.5}
-            className="rounded-lg"
-          >
-            <ZoomOut className="h-4 w-4" />
-          </Button>
-          <span className="text-sm text-gray-600 min-w-[60px] text-center">
-            {Math.round(scale * 100)}%
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={zoomIn}
-            disabled={scale >= 2.0}
-            className="rounded-lg"
-          >
-            <ZoomIn className="h-4 w-4" />
-          </Button>
+        <div className="flex shrink-0 items-center gap-1">
+          <div className="flex items-center rounded-lg border border-border bg-card p-0.5 shadow-[var(--shadow-sm)]">
+            <IconBtn label="Previous page" onClick={() => go(pageNumber - 1)} disabled={pageNumber <= 1}>
+              <ChevronLeft />
+            </IconBtn>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                go(Number(pageInput) || 1);
+              }}
+              className="flex items-center gap-1 px-1 font-mono text-[12px] tabular text-muted-foreground"
+            >
+              <label htmlFor="pdf-page" className="sr-only">
+                Page number
+              </label>
+              <input
+                id="pdf-page"
+                inputMode="numeric"
+                value={pageInput}
+                onChange={(e) => setPageInput(e.target.value.replace(/\D/g, ""))}
+                onBlur={() => go(Number(pageInput) || pageNumber)}
+                className="w-8 rounded bg-transparent text-center text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+              <span>/ {numPages || "–"}</span>
+            </form>
+            <IconBtn label="Next page" onClick={() => go(pageNumber + 1)} disabled={!numPages || pageNumber >= numPages}>
+              <ChevronRight />
+            </IconBtn>
+          </div>
 
-          {/* Page Navigation */}
-          <div className="h-6 w-px bg-gray-300 mx-2" />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={goToPrevPage}
-            disabled={pageNumber <= 1}
-            className="rounded-lg"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-sm text-gray-600 min-w-[80px] text-center">
-            {pageNumber} / {numPages || "—"}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={goToNextPage}
-            disabled={numPages === 0 || pageNumber >= numPages}
-            className="rounded-lg"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+          <div className="ml-1 hidden items-center rounded-lg border border-border bg-card p-0.5 shadow-[var(--shadow-sm)] sm:flex">
+            <IconBtn label="Zoom out" onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.15).toFixed(2)))} disabled={zoom <= 0.6}>
+              <Minus />
+            </IconBtn>
+            <button
+              onClick={() => setZoom(1)}
+              className="w-11 font-mono text-[12px] tabular text-muted-foreground hover:text-foreground"
+              title="Fit width"
+              aria-label="Reset zoom to fit width"
+            >
+              {Math.round(zoom * 100)}%
+            </button>
+            <IconBtn label="Zoom in" onClick={() => setZoom((z) => Math.min(2, +(z + 0.15).toFixed(2)))} disabled={zoom >= 2}>
+              <Plus />
+            </IconBtn>
+          </div>
+
+          {onClose && (
+            <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Close document panel" className="ml-1 text-muted-foreground">
+              <PanelRightClose className="size-4" strokeWidth={1.75} />
+            </Button>
+          )}
         </div>
       </div>
 
-      {/* PDF Display */}
-      <div className="flex-1 overflow-auto bg-gray-100">
-        <div className="flex justify-center p-6 min-h-full">
+      {/* Canvas */}
+      <div ref={canvasRef} className="min-h-0 flex-1 overflow-auto">
+        <div className="flex min-h-full justify-center p-6">
           <Document
-            file={src}
-            onLoadSuccess={onDocumentLoadSuccess}
-            onLoadError={onDocumentLoadError}
-            className="shadow-2xl rounded-lg overflow-hidden"
-            options={{
-              // You can add httpHeaders or withCredentials here if needed for protected URLs
-              // httpHeaders: { Authorization: `Bearer ...` },
-              // withCredentials: true,
+            file={fileUrl}
+            onLoadSuccess={({ numPages }) => {
+              setNumPages(numPages);
+              setError("");
             }}
+            onLoadError={(e) => setError(e.message || "This PDF could not be loaded.")}
+            loading={<PageSkeleton />}
+            error={<p className="text-[13px] text-danger">{error || "This PDF could not be loaded."}</p>}
           >
-            {error ? (
-              <div className="text-red-600 text-sm p-4">{error}</div>
-            ) : (
-              <Page
-                pageNumber={pageNumber}
-                scale={scale}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-                className="bg-white"
-              />
-            )}
+            <div key={flash} className={cn("rounded-[3px] bg-white shadow-[var(--shadow-lg)]", flash > 0 && "animate-page-flash")}>
+              <Page pageNumber={pageNumber} width={pageWidth} loading={<PageSkeleton />} renderTextLayer renderAnnotationLayer />
+            </div>
           </Document>
         </div>
       </div>
@@ -184,163 +171,22 @@ export default function PDFViewer({
   );
 }
 
+function IconBtn({ label, onClick, disabled, children }: { label: string; onClick: () => void; disabled?: boolean; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      title={label}
+      className="grid size-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-35 [&_svg]:size-3.5"
+    >
+      {children}
+    </button>
+  );
+}
 
-// "use client";
+function PageSkeleton() {
+  return <div className="aspect-[1/1.3] w-[min(100%,560px)] animate-pulse rounded-[3px] bg-card shadow-[var(--shadow-md)]" />;
+}
 
-// import { useState } from "react";
-// import dynamic from "next/dynamic"; // ✅ added for lazy loading
-// import { Button } from "@/components/ui/button";
-// import {
-//   ChevronLeft,
-//   ChevronRight,
-//   ZoomIn,
-//   ZoomOut,
-//   FileText,
-// } from "lucide-react";
-// import "react-pdf/dist/Page/AnnotationLayer.css";
-// import "react-pdf/dist/Page/TextLayer.css";
-
-// /* ✅ FIX: Dynamically import react-pdf client-side only */
-// const { Document, Page, pdfjs } = dynamic(
-//   async () => {
-//     const mod = await import("react-pdf");
-//     return {
-//       default: () => null, // placeholder (not used directly)
-//       Document: mod.Document,
-//       Page: mod.Page,
-//       pdfjs: mod.pdfjs,
-//     };
-//   },
-//   { ssr: false }
-// ) as unknown as typeof import("react-pdf");
-
-// /* ✅ FIX: Safe worker setup for pdf.js */
-// if (typeof window !== "undefined" && pdfjs) {
-//   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-// }
-
-// interface PDFViewerProps {
-//   file?: File | null;
-//   fileUrl?: string | null;
-//   pdfName?: string;
-//   initialPage?: number;
-// }
-
-// export default function PDFViewer({
-//   file = null,
-//   fileUrl = null,
-//   pdfName,
-//   initialPage = 1,
-// }: PDFViewerProps) {
-//   const [numPages, setNumPages] = useState<number>(0);
-//   const [pageNumber, setPageNumber] = useState<number>(initialPage);
-//   const [scale, setScale] = useState<number>(1.0);
-//   const [error, setError] = useState<string>("");
-
-//   const src: File | string | null = file ? file : fileUrl ? fileUrl : null;
-
-//   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-//     setNumPages(numPages);
-//     setPageNumber(Math.min(Math.max(initialPage, 1), numPages));
-//     setError("");
-//   }
-
-//   function onDocumentLoadError(err: Error) {
-//     setError(err.message || "Failed to load PDF.");
-//   }
-
-//   const goToPrevPage = () => setPageNumber((p) => Math.max(1, p - 1));
-//   const goToNextPage = () => setPageNumber((p) => Math.min(numPages, p + 1));
-//   const zoomIn = () => setScale((p) => Math.min(2.0, p + 0.2));
-//   const zoomOut = () => setScale((p) => Math.max(0.5, p - 0.2));
-
-//   if (!src) {
-//     return (
-//       <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-gray-50 to-gray-100 p-8">
-//         <div className="w-24 h-24 bg-gradient-to-br from-purple-200 to-blue-200 rounded-3xl flex items-center justify-center mb-6 shadow-lg">
-//           <FileText className="h-12 w-12 text-purple-600" />
-//         </div>
-//         <h3 className="text-xl font-semibold text-gray-900 mb-2">
-//           No PDF Selected
-//         </h3>
-//         <p className="text-gray-600 text-center max-w-md">
-//           Upload and select a PDF from the sidebar to view it here. You can zoom,
-//           scroll, and switch pages easily.
-//         </p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="flex flex-col h-full bg-gray-100">
-//       {/* Toolbar */}
-//       <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-sm flex-shrink-0">
-//         <div className="flex items-center space-x-2">
-//           <FileText className="h-5 w-5 text-purple-600" />
-//           <h3 className="text-sm font-medium text-gray-900 truncate max-w-[240px]">
-//             {pdfName || (file instanceof File ? file.name : "Document")}
-//           </h3>
-//         </div>
-
-//         <div className="flex items-center space-x-2">
-//           {/* Zoom Controls */}
-//           <Button variant="outline" size="sm" onClick={zoomOut} disabled={scale <= 0.5}>
-//             <ZoomOut className="h-4 w-4" />
-//           </Button>
-//           <span className="text-sm text-gray-600 min-w-[60px] text-center">
-//             {Math.round(scale * 100)}%
-//           </span>
-//           <Button variant="outline" size="sm" onClick={zoomIn} disabled={scale >= 2.0}>
-//             <ZoomIn className="h-4 w-4" />
-//           </Button>
-
-//           {/* Page Navigation */}
-//           <div className="h-6 w-px bg-gray-300 mx-2" />
-//           <Button
-//             variant="outline"
-//             size="sm"
-//             onClick={goToPrevPage}
-//             disabled={pageNumber <= 1}
-//           >
-//             <ChevronLeft className="h-4 w-4" />
-//           </Button>
-//           <span className="text-sm text-gray-600 min-w-[80px] text-center">
-//             {pageNumber} / {numPages || "—"}
-//           </span>
-//           <Button
-//             variant="outline"
-//             size="sm"
-//             onClick={goToNextPage}
-//             disabled={numPages === 0 || pageNumber >= numPages}
-//           >
-//             <ChevronRight className="h-4 w-4" />
-//           </Button>
-//         </div>
-//       </div>
-
-//       {/* PDF Display */}
-//       <div className="flex-1 overflow-auto bg-gray-100">
-//         <div className="flex justify-center p-6 min-h-full">
-//           <Document
-//             file={src}
-//             onLoadSuccess={onDocumentLoadSuccess}
-//             onLoadError={onDocumentLoadError}
-//             className="shadow-2xl rounded-lg overflow-hidden"
-//           >
-//             {error ? (
-//               <div className="text-red-600 text-sm p-4">{error}</div>
-//             ) : (
-//               <Page
-//                 pageNumber={pageNumber}
-//                 scale={scale}
-//                 renderTextLayer
-//                 renderAnnotationLayer
-//                 className="bg-white"
-//               />
-//             )}
-//           </Document>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
+const clamp = (n: number, lo: number, hi: number) => Math.min(Math.max(n, lo), hi);
