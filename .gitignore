@@ -45,3 +45,5 @@ next-env.d.ts
 # eval PDFs (not committed; see eval/README.md)
 /eval/pdfs/
 /eval/.pages/
+
+/local/
