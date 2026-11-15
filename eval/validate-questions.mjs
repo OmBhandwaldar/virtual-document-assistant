@@ -3,6 +3,8 @@
 // eval/extract-pages.mjs:
 //   - answerSnippet must appear on answerPage (whitespace/punctuation-insensitive)
 //   - warns if the snippet also appears on other pages (ambiguous label)
+//   - checks each optional acceptablePages[{page, snippet}] entry: other pages that
+//     also answer the question (e.g. a summary table or glossary), counted as hits
 //   - reports lexical overlap between question and snippet (lower = less keyword-matchable)
 //
 // Usage: node eval/extract-pages.mjs && node eval/validate-questions.mjs
@@ -39,6 +41,9 @@ for (const q of questions) {
   const qw = words(q.question), sw = words(q.answerSnippet);
   const overlap = [...qw].filter((w) => sw.has(w));
   if (!ok) errors++;
+  for (const a of q.acceptablePages ?? []) {
+    if (!p.get(a.page)?.includes(norm(a.snippet))) { errors++; console.log(`FAIL ${q.id} acceptablePage p${a.page}: evidence snippet not found`); }
+  }
   console.log(
     `${ok ? "OK  " : "FAIL"} ${q.id.padEnd(7)} p${String(q.answerPage).padEnd(4)}` +
       (ok ? "" : ` snippet found on: [${found.join(",") || "none"}]`) +
